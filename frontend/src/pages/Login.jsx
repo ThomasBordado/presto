@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import config from '../../backend.config.json';
 import { setToken } from '../Auth';
 
@@ -47,6 +47,9 @@ function Login() {
         <br />
         <button type="submit">Login</button>
       </form>
+      <p>
+        Don't have an account? <Link to="/register">Sign up</Link>
+      </p>
     </div>
   );
 }

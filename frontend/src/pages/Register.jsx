@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import config from '../../backend.config.json';
 import { setToken } from '../Auth';
 
@@ -73,6 +73,9 @@ function Register() {
         <br />
         <button type="submit">Register</button>
       </form>
+      <p>
+        Already have an account? <Link to="/login">Login</Link> {/* Link to login page */}
+      </p>
     </div>
   );
 }
