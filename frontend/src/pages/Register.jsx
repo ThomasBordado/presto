@@ -23,7 +23,7 @@ function Register() {
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {
-      alert(err.response.data.error || 'Registration failed. Please try again.');
+      alert(error.response.data.error || 'Registration failed. Please try again.');
     }
   };
 
