@@ -88,6 +88,10 @@ function Dashboard() {
     }
   };
 
+  const handleCardClick = (id) => {
+    navigate(`/presentation/${id}`);
+  };
+
   return (
     <div>
       <h2>Dashboard</h2>
@@ -122,6 +126,7 @@ function Dashboard() {
               name={presentation.name}
               description={presentation.description}
               slideCount={presentation.slides.length}
+              onClick={() => handleCardClick(presentation.id)}
             />
           ))}
         </CardContainer>

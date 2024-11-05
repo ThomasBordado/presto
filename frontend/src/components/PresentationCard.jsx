@@ -1,3 +1,5 @@
+// src/components/PresentationCard.jsx
+
 import React from 'react';
 import styled from 'styled-components';
 
@@ -12,6 +14,7 @@ const PresentationCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 `;
 
 const ThumbnailContainer = styled.div`
@@ -44,8 +47,8 @@ const SlideCount = styled.span`
   color: #333;
 `;
 
-const PresentationCard = ({ name, description, slideCount }) => (
-  <PresentationCardContainer>
+const PresentationCard = ({ name, description, slideCount, onClick }) => (
+  <PresentationCardContainer onClick={onClick}>
     <ThumbnailContainer />
     <Info>
       <Title>{name}</Title>
