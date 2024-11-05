@@ -1,0 +1,58 @@
+import React from 'react';
+import styled from 'styled-components';
+
+const PresentationCardContainer = styled.div`
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  min-width: 100px;
+  background-color: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const ThumbnailContainer = styled.div`
+  background-color: #999;
+  width: 100%;
+  height: 65%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Info = styled.div`
+  padding: 8px;
+  flex-grow: 1;
+`;
+
+const Title = styled.h4`
+  font-size: 1rem;
+  margin: 0;
+`;
+
+const Description = styled.p`
+  font-size: 0.875rem;
+  color: #666;
+  margin: 4px 0;
+`;
+
+const SlideCount = styled.span`
+  font-size: 0.75rem;
+  color: #333;
+`;
+
+const PresentationCard = ({ name, description, slideCount }) => (
+  <PresentationCardContainer>
+    <ThumbnailContainer />
+    <Info>
+      <Title>{name}</Title>
+      {description && <Description>{description}</Description>}
+      <SlideCount>{slideCount} Slide{slideCount !== 1 ? 's' : ''}</SlideCount>
+    </Info>
+  </PresentationCardContainer>
+);
+
+export default PresentationCard;
