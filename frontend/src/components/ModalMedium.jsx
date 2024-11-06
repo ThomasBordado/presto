@@ -35,7 +35,7 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
-function Modal({ onClose, children }) {
+function ModalMedium({ onClose, children }) {
   return (
     <Overlay>
       <Content>
@@ -46,4 +46,4 @@ function Modal({ onClose, children }) {
   );
 }
 
-export default Modal;
+export default ModalMedium;
