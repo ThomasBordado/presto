@@ -59,8 +59,8 @@ const PresentationCard = ({ name, description, slideCount, onClick }) => (
   <PresentationCardContainer onClick={onClick}>
     <ThumbnailContainer />
     <Info>
-      <Title>{format(name, 45)}</Title>
-      {description && <Description>{format(description, 50)}</Description>}
+      <Title>{format(name, 26)}</Title>
+      {description && <Description>{format(description, 32)}</Description>}
       <SlideCount>{slideCount} Slide{slideCount !== 1 ? 's' : ''}</SlideCount>
     </Info>
   </PresentationCardContainer>
