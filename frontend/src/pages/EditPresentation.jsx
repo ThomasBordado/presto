@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ModalSmall from '../components/ModalSmall';
+import ModalMedium from '../components/ModalMedium';
 import axios from 'axios';
 import { getToken } from '../Auth';
 import config from '../../backend.config.json';
@@ -8,7 +9,45 @@ import config from '../../backend.config.json';
 const EditPresentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [presentation, setPresentation] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isTitleEditModalOpen, setIsTitleEditModalOpen] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [thumbnail, setThumbnail] = useState(null);
+
+  useEffect(() => {
+    const fetchPresentation = async () => {
+      const token = getToken();
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const store = response.data.store;
+        const presentations = store.presentations || [];
+
+        const foundPresentation = presentations.find(
+          (presentation) => presentation.id === parseInt(id, 10)
+        );
+
+        if (foundPresentation) {
+          setPresentation(foundPresentation);
+          setNewTitle(foundPresentation.name);
+          setThumbnail(foundPresentation.thumbnail || '');
+        } else {
+          console.error('Presentation not found');
+        }
+      } catch (error) {
+        console.error('Error fetching presentation:', error);
+      }
+    };
+
+    fetchPresentation();
+  }, [id]);
 
   const handleBack = () => {
     navigate('/dashboard');
@@ -23,16 +62,18 @@ const EditPresentation = () => {
 
     try {
       const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const store = response.data.store;
       const presentations = store.presentations;
 
-      const updatedPresentations = presentations.filter(presentation => presentation.id !== parseInt(id, 10));
+      const updatedPresentations = presentations.filter(
+        (presentation) => presentation.id !== parseInt(id, 10)
+      );
 
       await axios.put(
-        `http://localhost:${config.BACKEND_PORT}/store`, 
-        { store: { presentations: updatedPresentations } }, 
+        `http://localhost:${config.BACKEND_PORT}/store`,
+        { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -50,18 +91,125 @@ const EditPresentation = () => {
     setIsDeleteModalOpen(false);
   };
 
+  const openTitleEditModal = () => {
+    setIsTitleEditModalOpen(true);
+  };
+
+  const closeTitleEditModal = () => {
+    setIsTitleEditModalOpen(false);
+  };
+
+  const handleTitleSave = async () => {
+    const token = getToken();
+    if (!token) {
+      console.error('No authentication token found');
+      return;
+    }
+
+    try {
+      const updatedPresentation = { ...presentation, name: newTitle };
+
+      const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const store = response.data.store;
+      const presentations = store.presentations || [];
+
+      const updatedPresentations = presentations.map((pres) =>
+        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+      );
+
+      await axios.put(
+        `http://localhost:${config.BACKEND_PORT}/store`,
+        { store: { presentations: updatedPresentations } },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setPresentation(updatedPresentation);
+      closeTitleEditModal();
+    } catch (error) {
+      console.error('Error updating title:', error);
+    }
+  };
+
+  const handleThumbnailChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const token = getToken();
+        if (!token) {
+          console.error('No authentication token found');
+          return;
+        }
+
+        const updatedPresentation = { ...presentation, thumbnail: reader.result };
+
+        const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const store = response.data.store;
+        const presentations = store.presentations || [];
+
+        const updatedPresentations = presentations.map((pres) =>
+          pres.id === parseInt(id, 10) ? updatedPresentation : pres
+        );
+
+        await axios.put(
+          `http://localhost:${config.BACKEND_PORT}/store`,
+          { store: { presentations: updatedPresentations } },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setPresentation(updatedPresentation);
+        setThumbnail(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div>
-      <h2>Edit Presentation</h2>
-      <button onClick={handleBack}>Back</button>
-      <button onClick={openDeleteModal}>Delete Presentation</button>
+      {presentation ? (
+        <>
+          <div>
+            <h2>{presentation.name}</h2>
+            <button onClick={openTitleEditModal}>Edit Title</button>
+          </div>
 
-      {isDeleteModalOpen && (
-        <ModalSmall onClose={closeDeleteModal}>
-          <p>Are you sure?</p>
-          <button onClick={handleDelete}>Yes</button>
-          <button onClick={closeDeleteModal}>No</button>
-        </ModalSmall>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleThumbnailChange}
+          />
+          {/* {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
+
+          <button onClick={handleBack}>Back</button>
+          <button onClick={openDeleteModal}>Delete Presentation</button>
+
+          {isTitleEditModalOpen && (
+            <ModalMedium onClose={closeTitleEditModal}>
+              <h3>Edit Title</h3>
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="Enter new title"
+              />
+              <button onClick={handleTitleSave}>Save</button>
+            </ModalMedium>
+          )}
+
+          {isDeleteModalOpen && (
+            <ModalSmall onClose={closeDeleteModal}>
+              <p>Are you sure?</p>
+              <button onClick={handleDelete}>Yes</button>
+              <button onClick={closeDeleteModal}>No</button>
+            </ModalSmall>
+          )}
+        </>
+      ) : (
+        <p>Loading presentation...</p>
       )}
     </div>
   );

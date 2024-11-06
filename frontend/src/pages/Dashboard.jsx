@@ -69,6 +69,7 @@ function Dashboard() {
       id: Date.now(),
       name: presentationName,
       description: presentationDescription,
+      thumbnail: null,
       slides: [{}]
     };
 
@@ -126,6 +127,7 @@ function Dashboard() {
               name={presentation.name}
               description={presentation.description}
               slideCount={presentation.slides.length}
+              thumbnail={presentation.thumbnail}
               onClick={() => handleCardClick(presentation.id)}
             />
           ))}

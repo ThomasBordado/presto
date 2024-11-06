@@ -1,5 +1,3 @@
-// src/components/PresentationCard.jsx
-
 import React from 'react';
 import styled from 'styled-components';
 
@@ -18,9 +16,12 @@ const PresentationCardContainer = styled.div`
 `;
 
 const ThumbnailContainer = styled.div`
-  background-color: #999;
   width: 100%;
-  height: 65%; 
+  height: 65%;
+  background-color: ${({ $thumbnail }) => ($thumbnail ? 'transparent' : '#999')};
+  background-image: ${({ $thumbnail }) => ($thumbnail ? `url(${$thumbnail})` : 'none')};
+  background-size: cover;
+  background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,16 +49,15 @@ const SlideCount = styled.span`
 `;
 
 const format = (str, maxLength) => {
-    if (str.length > maxLength) {
-        return str.substring(0, maxLength) + "...";
-    }
-    return str;
-}
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength) + "...";
+  }
+  return str;
+};
 
-
-const PresentationCard = ({ name, description, slideCount, onClick }) => (
+const PresentationCard = ({ name, description, slideCount, thumbnail, onClick }) => (
   <PresentationCardContainer onClick={onClick}>
-    <ThumbnailContainer />
+    <ThumbnailContainer $thumbnail={thumbnail} />
     <Info>
       <Title>{format(name, 26)}</Title>
       {description && <Description>{format(description, 32)}</Description>}
