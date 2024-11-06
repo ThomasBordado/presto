@@ -5,6 +5,8 @@ import ModalMedium from '../components/ModalMedium';
 import axios from 'axios';
 import { getToken } from '../Auth';
 import config from '../../backend.config.json';
+import SlideControl from '../components/SlideContol';
+import SlideNumber from '../components/SlideNumber';
 
 const EditPresentation = () => {
   const { id } = useParams();
@@ -14,6 +16,7 @@ const EditPresentation = () => {
   const [isTitleEditModalOpen, setIsTitleEditModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   useEffect(() => {
     const fetchPresentation = async () => {
@@ -168,6 +171,76 @@ const EditPresentation = () => {
     }
   };
 
+  // Create slide
+  const handleCreateSlide = async () => {
+    const newSlide = {};
+    const updatedSlides = [...presentation.slides, newSlide];
+    await saveSlides(updatedSlides);
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+    setCurrentSlideIndex(updatedSlides.length - 1);
+  };
+
+  // Delete slide
+  const handleDeleteSlide = async () => {
+    if (presentation.slides.length === 1) {
+      alert('Cannot delete the only slide. Delete the presentation instead.');
+      return;
+    }
+    const updatedSlides = presentation.slides.filter((_, index) => index !== currentSlideIndex);
+    await saveSlides(updatedSlides);
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+    setCurrentSlideIndex((prev) => (prev > 0 ? prev - 1 : 0));
+  };
+
+  const saveSlides = async (updatedSlides) => {
+    const token = getToken();
+    if (!token) {
+      console.error('No authentication token found');
+      return;
+    }
+
+    try {
+      const updatedPresentation = { ...presentation, slides: updatedSlides };
+
+      const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const store = response.data.store;
+      const presentations = store.presentations || [];
+
+      const updatedPresentations = presentations.map((pres) =>
+        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+      );
+
+      await axios.put(
+        `http://localhost:${config.BACKEND_PORT}/store`,
+        { store: { presentations: updatedPresentations } },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error('Error saving slides:', error);
+    }
+  };
+
+  const goToPreviousSlide = () => setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
+  const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
+
+  // Keyboard navigation of left and right arrow keys on slides
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowLeft') goToPreviousSlide();
+      if (event.key === 'ArrowRight') goToNextSlide();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentSlideIndex, presentation?.slides.length]);
+
   return (
     <div>
       {presentation ? (
@@ -207,6 +280,17 @@ const EditPresentation = () => {
               <button onClick={closeDeleteModal}>No</button>
             </ModalSmall>
           )}
+
+          <SlideControl
+            currentSlideIndex={currentSlideIndex}
+            totalSlides={presentation.slides.length}
+            goToPreviousSlide={goToPreviousSlide}
+            goToNextSlide={goToNextSlide}
+            handleCreateSlide={handleCreateSlide}
+            handleDeleteSlide={handleDeleteSlide}
+          />
+          {/* Slide content would go here */}
+          <SlideNumber currentSlideIndex={currentSlideIndex} />
         </>
       ) : (
         <p>Loading presentation...</p>
