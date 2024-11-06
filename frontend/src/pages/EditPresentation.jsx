@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Modal from '../components/Modal';
+import ModalSmall from '../components/ModalSmall';
 import axios from 'axios';
 import { getToken } from '../Auth';
 import config from '../../backend.config.json';
@@ -57,11 +57,11 @@ const EditPresentation = () => {
       <button onClick={openDeleteModal}>Delete Presentation</button>
 
       {isDeleteModalOpen && (
-        <Modal onClose={closeDeleteModal}>
+        <ModalSmall onClose={closeDeleteModal}>
           <p>Are you sure?</p>
           <button onClick={handleDelete}>Yes</button>
           <button onClick={closeDeleteModal}>No</button>
-        </Modal>
+        </ModalSmall>
       )}
     </div>
   );

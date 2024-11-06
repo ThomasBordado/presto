@@ -47,12 +47,20 @@ const SlideCount = styled.span`
   color: #333;
 `;
 
+const format = (str, maxLength) => {
+    if (str.length > maxLength) {
+        return str.substring(0, maxLength) + "...";
+    }
+    return str;
+}
+
+
 const PresentationCard = ({ name, description, slideCount, onClick }) => (
   <PresentationCardContainer onClick={onClick}>
     <ThumbnailContainer />
     <Info>
-      <Title>{name}</Title>
-      {description && <Description>{description}</Description>}
+      <Title>{format(name, 45)}</Title>
+      {description && <Description>{format(description, 50)}</Description>}
       <SlideCount>{slideCount} Slide{slideCount !== 1 ? 's' : ''}</SlideCount>
     </Info>
   </PresentationCardContainer>

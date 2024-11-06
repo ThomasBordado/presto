@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logout from '../components/Logout';
 import { isAuthenticated, getToken } from '../Auth';
-import Modal from '../components/Modal';
+import ModalMedium from '../components/ModalMedium';
 import axios from 'axios';
 import config from '../../backend.config.json';
 import { CardContainer } from '../components/CardStyles';
@@ -99,7 +99,7 @@ function Dashboard() {
       <NewPresentationButton onClick={handleOpenModal}>New Presentation</NewPresentationButton>
 
       {isModalOpen && (
-        <Modal onClose={handleCloseModal}>
+        <ModalMedium onClose={handleCloseModal}>
           <h3>Create a New Presentation</h3>
           <input
             type="text"
@@ -114,7 +114,7 @@ function Dashboard() {
             placeholder="Enter description"
           />
           <button onClick={handleCreatePresentation}>Create</button>
-        </Modal>
+        </ModalMedium>
       )}
 
       <div>
