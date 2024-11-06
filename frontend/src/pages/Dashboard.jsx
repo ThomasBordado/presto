@@ -60,11 +60,16 @@ function Dashboard() {
   };
 
   const handleCreatePresentation = async () => {
+    if (!presentationName.trim()) {
+      return alert('Presentation name is required.');
+    }
+
     const token = getToken();
     if (!token) {
       console.error('No authentication token found');
       return;
     }
+
     const newPresentation = {
       id: Date.now(),
       name: presentationName,
@@ -76,8 +81,8 @@ function Dashboard() {
     try {
       const updatedPresentations = [...presentations, newPresentation];
       await axios.put(
-        `http://localhost:${config.BACKEND_PORT}/store`, 
-        { store: { presentations: updatedPresentations } }, 
+        `http://localhost:${config.BACKEND_PORT}/store`,
+        { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPresentations(updatedPresentations);
