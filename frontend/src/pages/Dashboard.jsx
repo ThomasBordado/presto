@@ -61,6 +61,7 @@ function Dashboard() {
 
   const handleCreatePresentation = async () => {
     if (!presentationName.trim()) {
+      // need to change alert
       return alert('Presentation name is required.');
     }
 

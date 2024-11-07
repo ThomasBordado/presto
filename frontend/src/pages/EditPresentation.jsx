@@ -7,6 +7,11 @@ import { getToken } from '../Auth';
 import config from '../../backend.config.json';
 import SlideControl from '../components/SlideContol';
 import SlideNumber from '../components/SlideNumber';
+import styled from 'styled-components';
+
+const Title = styled.h3`
+  line-break: anywhere;
+`;
 
 const EditPresentation = () => {
   const { id } = useParams();
@@ -186,6 +191,7 @@ const EditPresentation = () => {
   // Delete slide
   const handleDeleteSlide = async () => {
     if (presentation.slides.length === 1) {
+      // need to change alert
       alert('Cannot delete the only slide. Delete the presentation instead.');
       return;
     }
@@ -246,7 +252,7 @@ const EditPresentation = () => {
       {presentation ? (
         <>
           <div>
-            <h2>{presentation.name}</h2>
+            <Title>{presentation.name}</Title>
             <button onClick={openTitleEditModal}>Edit Title</button>
           </div>
 
@@ -255,7 +261,7 @@ const EditPresentation = () => {
             accept="image/*"
             onChange={handleThumbnailChange}
           />
-          {/* {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
+          {/* Code to show thumbnail {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
 
           <button onClick={handleBack}>Back</button>
           <button onClick={openDeleteModal}>Delete Presentation</button>
