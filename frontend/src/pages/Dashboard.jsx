@@ -7,6 +7,7 @@ import axios from 'axios';
 import config from '../../backend.config.json';
 import { CardContainer } from '../components/CardStyles';
 import PresentationCard from '../components/PresentationCard';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 
 const NewPresentationButton = styled.button`
@@ -26,6 +27,7 @@ function Dashboard() {
   const [presentationName, setPresentationName] = useState('');
   const [presentationDescription, setPresentationDescription] = useState('');
   const [presentations, setPresentations] = useState([]);
+  const { showError, ErrorDisplay } = useErrorMessage();
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -61,8 +63,7 @@ function Dashboard() {
 
   const handleCreatePresentation = async () => {
     if (!presentationName.trim()) {
-      // need to change alert
-      return alert('Presentation name is required.');
+      return showError('Presentation name is required.');
     }
 
     const token = getToken();
@@ -101,6 +102,7 @@ function Dashboard() {
 
   return (
     <div>
+      <ErrorDisplay />
       <h2>Dashboard</h2>
       <Logout />
       <NewPresentationButton onClick={handleOpenModal}>New Presentation</NewPresentationButton>
