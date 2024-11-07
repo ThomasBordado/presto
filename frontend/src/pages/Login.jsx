@@ -3,10 +3,12 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import config from '../../backend.config.json';
 import { setToken } from '../Auth';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { showError, ErrorDisplay } = useErrorMessage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,12 +19,13 @@ function Login() {
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {
-      alert(error.response.data.error || 'Login failed. Please try again.');
+      showError(error.response.data.error || 'Login failed. Please try again.');
     }
   };
 
   return (
     <div>
+      <ErrorDisplay />
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <label>

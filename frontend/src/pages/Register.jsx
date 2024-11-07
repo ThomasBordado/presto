@@ -3,19 +3,21 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import config from '../../backend.config.json';
 import { setToken } from '../Auth';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { showError, ErrorDisplay } = useErrorMessage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      return alert('Passwords do not match. Please reenter your password and try again.');
+      return showError('Passwords do not match. Please reenter your password and try again.');
     }
 
     try {
@@ -23,12 +25,13 @@ function Register() {
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {
-      alert(error.response.data.error || 'Registration failed. Please try again.');
+      showError(error.response.data.error || 'Registration failed. Please try again.');
     }
   };
 
   return (
     <div>
+      <ErrorDisplay />
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <label>

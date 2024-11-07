@@ -9,6 +9,7 @@ import SlideControl from '../components/SlideContol';
 import SlideNumber from '../components/SlideNumber';
 import SlideContainer from '../components/SlideContainer';
 import ToolPanel from '../components/ToolPanel';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 
 const Title = styled.h3`
@@ -24,6 +25,7 @@ const EditPresentation = () => {
   const [newTitle, setNewTitle] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const { showError, ErrorDisplay } = useErrorMessage();
 
   useEffect(() => {
     const fetchPresentation = async () => {
@@ -193,8 +195,7 @@ const EditPresentation = () => {
   // Delete slide
   const handleDeleteSlide = async () => {
     if (presentation.slides.length === 1) {
-      // need to change alert
-      alert('Cannot delete the only slide. Delete the presentation instead.');
+      showError('Cannot delete the only slide. Delete the presentation instead.');
       return;
     }
     const updatedSlides = presentation.slides.filter((_, index) => index !== currentSlideIndex);
@@ -251,6 +252,7 @@ const EditPresentation = () => {
 
   return (
     <div>
+      <ErrorDisplay />
       {presentation ? (
         <>
           <div>
