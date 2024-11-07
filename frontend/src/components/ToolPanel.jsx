@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 const ToolPanelContainer = styled.div`
@@ -37,27 +37,46 @@ const ToggleButton = styled.button`
 `;
 
 const ToolContainer = styled.div`
-    position: relative;
+  position: relative;
 `;
 
 const ToolPanel = ({ onAddText }) => {
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const panelRef = useRef(null);
 
-    const togglePanel = () => setIsOpen(!isOpen);
+  const togglePanel = () => setIsOpen(!isOpen);
 
-    return (
-        <ToolContainer>
-        <ToggleButton onClick={togglePanel}>
-            {isOpen ? 'Hide Tools' : 'Show Tools'}
-        </ToggleButton>
+  const handleClickOutside = (event) => {
+    if (panelRef.current && !panelRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
 
-        {isOpen && (
-            <ToolPanelContainer>
-                <ToolButton onClick={onAddText}>Add Text Box</ToolButton>
-            </ToolPanelContainer>
-        )}
-        </ToolContainer>
-    );
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <ToolContainer ref={panelRef}>
+      <ToggleButton onClick={togglePanel}>
+        {isOpen ? 'Hide Tools' : 'Show Tools'}
+      </ToggleButton>
+
+      {isOpen && (
+        <ToolPanelContainer>
+          <ToolButton onClick={onAddText}>Add Text Box</ToolButton>
+        </ToolPanelContainer>
+      )}
+    </ToolContainer>
+  );
 };
 
 export default ToolPanel;

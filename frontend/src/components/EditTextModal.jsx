@@ -1,22 +1,37 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 
 const FormField = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   display: flex;
   flex-direction: column;
 `;
 
-const AddTextModal = ({ isOpen, onClose, onSave }) => {
+const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
   const textRef = useRef();
   const fontSizeRef = useRef();
   const colorRef = useRef();
   const widthRef = useRef();
   const heightRef = useRef();
+  const xPosRef = useRef();
+  const yPosRef = useRef();
+
+  useEffect(() => {
+    if (textBox) {
+      textRef.current.value = textBox.text;
+      fontSizeRef.current.value = textBox.fontSize;
+      colorRef.current.value = textBox.color;
+      widthRef.current.value = textBox.size.width;
+      heightRef.current.value = textBox.size.height;
+      xPosRef.current.value = textBox.position?.x ?? 0;
+      yPosRef.current.value = textBox.position?.y ?? 0;
+    }
+  }, [textBox]);
 
   const handleSave = () => {
-    const newTextBox = {
+    const updatedTextBox = {
+      ...textBox,
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
       color: colorRef.current.value,
@@ -24,10 +39,13 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
         width: parseInt(widthRef.current.value, 10),
         height: parseInt(heightRef.current.value, 10),
       },
-      position: { x: 0, y: 0 },
+      position: {
+        x: parseInt(xPosRef.current.value, 10),
+        y: parseInt(yPosRef.current.value, 10),
+      },
     };
 
-    onSave(newTextBox);
+    onSave(updatedTextBox);
     onClose();
   };
 
@@ -35,7 +53,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
 
   return (
     <ModalMedium onClose={onClose}>
-      <h3>Add Text Box</h3>
+      <h3>Edit Text Box</h3>
 
       <FormField>
         <label>Text Content:</label>
@@ -62,9 +80,19 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
         <input type="number" ref={heightRef} />
       </FormField>
 
-      <button onClick={handleSave}>Add Text</button>
+      <FormField>
+        <label>Position X (%):</label>
+        <input type="number" ref={xPosRef} min="0" max="100" />
+      </FormField>
+
+      <FormField>
+        <label>Position Y (%):</label>
+        <input type="number" ref={yPosRef} min="0" max="100" />
+      </FormField>
+
+      <button onClick={handleSave}>Save Changes</button>
     </ModalMedium>
   );
 };
 
-export default AddTextModal;
+export default EditTextModal;
