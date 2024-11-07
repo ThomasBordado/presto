@@ -32,7 +32,7 @@ const EditPresentation = () => {
   const [isEditTextModalOpen, setIsEditTextModalOpen] = useState(false);
   const [editingTextBoxIndex, setEditingTextBoxIndex] = useState(null);
   const { showError, ErrorDisplay } = useErrorMessage();
-
+  
   useEffect(() => {
     const fetchPresentation = async () => {
       const token = getToken();
@@ -247,14 +247,17 @@ const EditPresentation = () => {
   const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
 
   // Keyboard navigation of left and right arrow keys on slides
+  const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen;
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'ArrowLeft') goToPreviousSlide();
-      if (event.key === 'ArrowRight') goToNextSlide();
+      if (!isAnyModalOpen) {
+        if (event.key === 'ArrowLeft') goToPreviousSlide();
+        if (event.key === 'ArrowRight') goToNextSlide();
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSlideIndex, presentation?.slides.length]);
+  }, [currentSlideIndex, presentation?.slides.length, isAnyModalOpen]);
 
   const openAddTextModal = () => setIsAddTextModalOpen(true);
   const closeAddTextModal = () => setIsAddTextModalOpen(false);
