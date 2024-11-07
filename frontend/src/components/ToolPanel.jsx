@@ -40,7 +40,7 @@ const ToolContainer = styled.div`
   position: relative;
 `;
 
-const ToolPanel = ({ onAddText }) => {
+const ToolPanel = ({ onAddText, onAddImage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const panelRef = useRef(null);
 
@@ -73,6 +73,7 @@ const ToolPanel = ({ onAddText }) => {
       {isOpen && (
         <ToolPanelContainer>
           <ToolButton onClick={onAddText}>Add Text Box</ToolButton>
+          <ToolButton onClick={onAddImage}>Add Image</ToolButton>
         </ToolPanelContainer>
       )}
     </ToolContainer>

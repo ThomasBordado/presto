@@ -9,6 +9,7 @@ const TextBox = styled.div`
   height: ${({ $size }) => $size.height}%;
   font-size: ${({ $fontSize }) => $fontSize}em;
   color: ${({ $color }) => $color};
+  z-index: ${({ $zIndex }) => $zIndex};
   border: 2px solid #ccc;
   padding: 5px;
   overflow: hidden;
