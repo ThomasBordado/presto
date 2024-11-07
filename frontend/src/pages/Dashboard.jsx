@@ -81,7 +81,7 @@ function Dashboard() {
     };
 
     try {
-      const updatedPresentations = [...presentations, newPresentation];
+      const updatedPresentations = [newPresentation, ...presentations];
       await axios.put(
         `http://localhost:${config.BACKEND_PORT}/store`,
         { store: { presentations: updatedPresentations } },
