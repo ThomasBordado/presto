@@ -9,8 +9,10 @@ import SlideControl from '../components/SlideContol';
 import SlideNumber from '../components/SlideNumber';
 import SlideContainer from '../components/SlideContainer';
 import ToolPanel from '../components/ToolPanel';
+import AddTextModal from '../components/AddTextModal';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
+import TextBox from '../components/TextBox';
 
 const Title = styled.h3`
   line-break: anywhere;
@@ -25,6 +27,8 @@ const EditPresentation = () => {
   const [newTitle, setNewTitle] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
+  const [editingTextBoxIndex, setEditingTextBoxIndex] = useState(null);
   const { showError, ErrorDisplay } = useErrorMessage();
 
   useEffect(() => {
@@ -250,11 +254,62 @@ const EditPresentation = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlideIndex, presentation?.slides.length]);
 
+  const openTextModal = (index) => {
+    setEditingTextBoxIndex(index);
+    setIsTextModalOpen(true);
+  };
+
+  const closeTextModal = () => {
+    setIsTextModalOpen(false);
+    setEditingTextBoxIndex(null);
+  };
+
+  const handleSaveTextBox = async (textBox) => {
+    const updatedSlides = [...presentation.slides];
+    const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
+
+    const updatedTextBoxes =
+      editingTextBoxIndex !== null
+        ? textBoxes.map((box, i) => (i === editingTextBoxIndex ? textBox : box))
+        : [...textBoxes, textBox];
+
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      textBoxes: updatedTextBoxes,
+    };
+
+    await saveSlides(updatedSlides);
+
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+
+    closeTextModal();
+  };
+
+  const handleDeleteTextBox = async (index) => {
+    const updatedSlides = [...presentation.slides];
+    const updatedTextBoxes = updatedSlides[currentSlideIndex].textBoxes.filter((_, i) => i !== index);
+
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      textBoxes: updatedTextBoxes,
+    };
+
+    await saveSlides(updatedSlides);
+
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+  };
+
   return (
     <div>
       <ErrorDisplay />
       {presentation ? (
-        <>
+        <div>
           <div>
             <Title>{presentation.name}</Title>
             <button onClick={openTitleEditModal}>Edit Title</button>
@@ -299,11 +354,38 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          <ToolPanel />
+          <ToolPanel onAddText={() => openTextModal(null)} />
+
+          <AddTextModal
+            isOpen={isTextModalOpen}
+            onClose={closeTextModal}
+            onSave={handleSaveTextBox}
+            textBox={
+              editingTextBoxIndex !== null
+                ? presentation.slides[currentSlideIndex].textBoxes[editingTextBoxIndex]
+                : null
+            }
+          />
           <SlideContainer>
+            {presentation.slides[currentSlideIndex]?.textBoxes?.map((box, index) => (
+              <TextBox
+                key={index}
+                $size={box.size}
+                $fontSize={box.fontSize}
+                $color={box.color}
+                $position={box.position || { x: 0, y: 0 }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleDeleteTextBox(index);
+                }}
+                onDoubleClick={() => openTextModal(index)}
+              >
+                {box.text}
+              </TextBox>
+            ))}
             <SlideNumber currentSlideIndex={currentSlideIndex} />
           </SlideContainer>
-        </>
+        </div>
       ) : (
         <p>Loading presentation...</p>
       )}

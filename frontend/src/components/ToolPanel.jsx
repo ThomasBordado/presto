@@ -40,24 +40,24 @@ const ToolContainer = styled.div`
     position: relative;
 `;
 
-const ToolPanel = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const ToolPanel = ({ onAddText }) => {
+    const [isOpen, setIsOpen] = useState(false);
 
-  const togglePanel = () => setIsOpen(!isOpen);
+    const togglePanel = () => setIsOpen(!isOpen);
 
-  return (
-    <ToolContainer>
-      <ToggleButton onClick={togglePanel}>
-        {isOpen ? 'Hide Tools' : 'Show Tools'}
-      </ToggleButton>
+    return (
+        <ToolContainer>
+        <ToggleButton onClick={togglePanel}>
+            {isOpen ? 'Hide Tools' : 'Show Tools'}
+        </ToggleButton>
 
-      {isOpen && (
-        <ToolPanelContainer>
-          <ToolButton>Add Text</ToolButton>
-        </ToolPanelContainer>
-      )}
-    </ToolContainer>
-  );
+        {isOpen && (
+            <ToolPanelContainer>
+                <ToolButton onClick={onAddText}>Add Text Box</ToolButton>
+            </ToolPanelContainer>
+        )}
+        </ToolContainer>
+    );
 };
 
 export default ToolPanel;
