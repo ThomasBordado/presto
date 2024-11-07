@@ -1,0 +1,63 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+const ToolPanelContainer = styled.div`
+  position: absolute;
+  top: 40px;
+  left: 0;
+  padding: 10px;
+  background-color: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;
+
+const ToolButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 0; 
+  width: auto;
+`;
+
+const ToggleButton = styled.button`
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+const ToolContainer = styled.div`
+    position: relative;
+`;
+
+const ToolPanel = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const togglePanel = () => setIsOpen(!isOpen);
+
+  return (
+    <ToolContainer>
+      <ToggleButton onClick={togglePanel}>
+        {isOpen ? 'Hide Tools' : 'Show Tools'}
+      </ToggleButton>
+
+      {isOpen && (
+        <ToolPanelContainer>
+          <ToolButton>Add Text</ToolButton>
+        </ToolPanelContainer>
+      )}
+    </ToolContainer>
+  );
+};
+
+export default ToolPanel;
