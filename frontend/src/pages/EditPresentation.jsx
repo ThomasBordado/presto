@@ -7,6 +7,8 @@ import { getToken } from '../Auth';
 import config from '../../backend.config.json';
 import SlideControl from '../components/SlideContol';
 import SlideNumber from '../components/SlideNumber';
+import SlideContainer from '../components/SlideContainer';
+import ToolPanel from '../components/ToolPanel';
 import styled from 'styled-components';
 
 const Title = styled.h3`
@@ -295,8 +297,10 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          {/* Slide content would go here */}
-          <SlideNumber currentSlideIndex={currentSlideIndex} />
+          <ToolPanel />
+          <SlideContainer>
+            <SlideNumber currentSlideIndex={currentSlideIndex} />
+          </SlideContainer>
         </>
       ) : (
         <p>Loading presentation...</p>
