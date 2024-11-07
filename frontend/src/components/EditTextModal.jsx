@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 
 const FormField = styled.div`
   margin-bottom: 5px;
@@ -9,6 +10,8 @@ const FormField = styled.div`
 `;
 
 const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
+  const { showError, ErrorDisplay } = useErrorMessage();
+
   const textRef = useRef();
   const fontSizeRef = useRef();
   const colorRef = useRef();
@@ -30,6 +33,26 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
   }, [textBox]);
 
   const handleSave = () => {
+    const width = parseInt(widthRef.current.value, 10);
+    const height = parseInt(heightRef.current.value, 10);
+    if (width < 0 || width > 100 || height < 0 || height > 100) {
+      showError('Width or Height is not between 0 and 100.');
+      return;
+    }
+
+    const xpos = parseInt(xPosRef.current.value, 10);
+    const ypos = parseInt(yPosRef.current.value, 10);
+
+    if (xpos < 0 || xpos > 100 || ypos < 0 || ypos > 100) {
+      showError('Position must be between 0 and 100.');
+      return;
+    }
+
+    if (xpos + width > 100 || ypos + height > 100) {
+      showError('Textbox can\'t be moved here due to overflow.');
+      return;
+    }
+
     const updatedTextBox = {
       ...textBox,
       text: textRef.current.value,
@@ -53,6 +76,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
 
   return (
     <ModalMedium onClose={onClose}>
+      <ErrorDisplay />
       <h3>Edit Text Box</h3>
 
       <FormField>

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
+import { useErrorMessage } from '../hooks/UseErrorMessage';
 
 const FormField = styled.div`
   margin-bottom: 15px;
@@ -9,6 +10,7 @@ const FormField = styled.div`
 `;
 
 const AddTextModal = ({ isOpen, onClose, onSave }) => {
+  const { showError, ErrorDisplay } = useErrorMessage();
   const textRef = useRef();
   const fontSizeRef = useRef();
   const colorRef = useRef();
@@ -16,6 +18,14 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
   const heightRef = useRef();
 
   const handleSave = () => {
+    const width = parseInt(widthRef.current.value, 10);
+    const height = parseInt(heightRef.current.value, 10);
+
+    if (width < 0 || width > 100 || height < 0 || height > 100) {
+      showError('Width or Height is not between 0 and 100');
+      return;
+    }
+
     const newTextBox = {
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
@@ -35,6 +45,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
 
   return (
     <ModalMedium onClose={onClose}>
+      <ErrorDisplay />
       <h3>Add Text Box</h3>
 
       <FormField>
