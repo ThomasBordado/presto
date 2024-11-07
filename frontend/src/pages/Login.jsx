@@ -1,9 +1,86 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import styled from 'styled-components';
 import config from '../../backend.config.json';
 import { setToken } from '../Auth';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  margin: -8px;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.8);;
+`;
+
+const LoginBox = styled.div`
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 8px;
+  width: 320px;
+  text-align: center;
+`;
+
+const Title = styled.h2`
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+`;
+
+const FormLabel = styled.label`
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const FooterText = styled.p`
+  margin-top: 15px;
+  color: #333;
+  font-family: Arial, sans-serif;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+`;
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -24,36 +101,30 @@ function Login() {
   };
 
   return (
-    <div>
-      <ErrorDisplay />
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-        </label>
-        <br />
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <label>
-          Password:
-        </label>
-        <br />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account? <Link to="/register">Sign up</Link>
-      </p>
-    </div>
+    <Container>
+      <LoginBox>
+        <Title>Login</Title>
+        <ErrorDisplay />
+        <form onSubmit={handleSubmit}>
+          <FormLabel>Email:</FormLabel>
+          <InputField
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <FormLabel>Password:</FormLabel>
+          <InputField
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <SubmitButton type="submit">Login</SubmitButton>
+        </form>
+        <FooterText>
+          Don't have an account? <Link to="/register">Sign up</Link>
+        </FooterText>
+      </LoginBox>
+    </Container>
   );
 }
 
