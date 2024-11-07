@@ -10,6 +10,7 @@ import SlideNumber from '../components/SlideNumber';
 import SlideContainer from '../components/SlideContainer';
 import ToolPanel from '../components/ToolPanel';
 import AddTextModal from '../components/AddTextModal';
+import EditTextModal from '../components/EditTextModal';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 import TextBox from '../components/TextBox';
@@ -27,7 +28,8 @@ const EditPresentation = () => {
   const [newTitle, setNewTitle] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
+  const [isAddTextModalOpen, setIsAddTextModalOpen] = useState(false);
+  const [isEditTextModalOpen, setIsEditTextModalOpen] = useState(false);
   const [editingTextBoxIndex, setEditingTextBoxIndex] = useState(null);
   const { showError, ErrorDisplay } = useErrorMessage();
 
@@ -254,13 +256,15 @@ const EditPresentation = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlideIndex, presentation?.slides.length]);
 
-  const openTextModal = (index) => {
-    setEditingTextBoxIndex(index);
-    setIsTextModalOpen(true);
-  };
+  const openAddTextModal = () => setIsAddTextModalOpen(true);
+  const closeAddTextModal = () => setIsAddTextModalOpen(false);
 
-  const closeTextModal = () => {
-    setIsTextModalOpen(false);
+  const openEditTextModal = (index) => {
+    setEditingTextBoxIndex(index);
+    setIsEditTextModalOpen(true);
+  };
+  const closeEditTextModal = () => {
+    setIsEditTextModalOpen(false);
     setEditingTextBoxIndex(null);
   };
 
@@ -285,7 +289,7 @@ const EditPresentation = () => {
       slides: updatedSlides,
     }));
 
-    closeTextModal();
+    closeEditTextModal();
   };
 
   const handleDeleteTextBox = async (index) => {
@@ -354,11 +358,16 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          <ToolPanel onAddText={() => openTextModal(null)} />
+          <ToolPanel onAddText={openAddTextModal} />
 
           <AddTextModal
-            isOpen={isTextModalOpen}
-            onClose={closeTextModal}
+            isOpen={isAddTextModalOpen}
+            onClose={closeAddTextModal}
+            onSave={handleSaveTextBox}
+          />
+          <EditTextModal
+            isOpen={isEditTextModalOpen}
+            onClose={closeEditTextModal}
             onSave={handleSaveTextBox}
             textBox={
               editingTextBoxIndex !== null
@@ -378,7 +387,7 @@ const EditPresentation = () => {
                   e.preventDefault();
                   handleDeleteTextBox(index);
                 }}
-                onDoubleClick={() => openTextModal(index)}
+                onDoubleClick={() => openEditTextModal(index)}
               >
                 {box.text}
               </TextBox>
