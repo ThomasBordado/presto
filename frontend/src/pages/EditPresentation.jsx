@@ -16,6 +16,8 @@ import styled from 'styled-components';
 import TextBox from '../components/TextBox';
 import AddImageModal from '../components/AddImageModal';
 import StyledImage from '../components/StyledImage';
+import AddVideoModal from '../components/AddVideoModal';
+import StyledVideo from '../components/StyledVideo'
 
 const Title = styled.h3`
   line-break: anywhere;
@@ -35,6 +37,8 @@ const EditPresentation = () => {
   const [editingTextBoxIndex, setEditingTextBoxIndex] = useState(null);
   const [isAddImageModalOpen, setIsAddImageModalOpen] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState(null);
+  const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
+  const [editingVideoIndex, setEditingVideoIndex] = useState(null);
   const { showError, ErrorDisplay } = useErrorMessage();
   
   useEffect(() => {
@@ -279,6 +283,7 @@ const EditPresentation = () => {
     const updatedSlides = [...presentation.slides];
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
+    const videos = updatedSlides[currentSlideIndex].videos || [];
 
 
     let updatedTextBoxes = null;
@@ -288,6 +293,7 @@ const EditPresentation = () => {
       const highestZIndex = Math.max(
         ...(textBoxes).map((box) => box.zIndex || 0),
         ...(images).map((img) => img.zIndex || 0),
+        ...(videos).map((vid) => vid.zIndex || 0),
         0
       );
       const newTextBox = { ...textBox, zIndex: highestZIndex + 1 };
@@ -341,6 +347,7 @@ const EditPresentation = () => {
     const updatedSlides = [...presentation.slides];
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
+    const videos = updatedSlides[currentSlideIndex].videos || [];
 
 
     let updatedImages = null;
@@ -354,6 +361,7 @@ const EditPresentation = () => {
       const highestZIndex = Math.max(
         ...(textBoxes).map((box) => box.zIndex || 0),
         ...(images).map((img) => img.zIndex || 0),
+        ...(videos).map((vid) => vid.zIndex || 0),
         0
       );
       const newImageData = { ...imageData, zIndex: highestZIndex + 1 };
@@ -390,6 +398,62 @@ const EditPresentation = () => {
       ...prev,
       slides: updatedSlides,
     }));
+  };
+
+  const openAddVideoModal = () => {
+    setEditingVideoIndex(null);
+    setIsAddVideoModalOpen(true);
+  };
+  
+  const closeAddVideoModal = () => {
+    setIsAddVideoModalOpen(false);
+    setEditingVideoIndex(null);
+  };
+  
+  const openEditVideoModal = (index) => {
+    setEditingVideoIndex(index);
+    setIsAddVideoModalOpen(true);
+  };
+
+  const handleSaveVideo = async (videoData) => {
+    const updatedSlides = [...presentation.slides];
+    const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
+    const images = updatedSlides[currentSlideIndex].images || [];
+    const videos = updatedSlides[currentSlideIndex].videos || [];
+
+      let updatedVideos = null;
+      if (editingVideoIndex !== null) {
+        updatedVideos = videos.map((vid, i) => 
+          i === editingVideoIndex
+            ? { ...videoData, zIndex: vid.zIndex ?? videoData.zIndex }
+            : vid
+        );
+      } else {
+        const highestZIndex = Math.max(
+          ...(textBoxes).map((box) => box.zIndex || 0),
+          ...(images).map((img) => img.zIndex || 0),
+          ...(videos).map((vid) => vid.zIndex || 0),
+          0
+        );
+        const newVideoData = { ...videoData, zIndex: highestZIndex + 1 };
+        updatedVideos = [...videos, newVideoData];
+      }
+  
+    updatedSlides[currentSlideIndex] = { ...updatedSlides[currentSlideIndex], videos: updatedVideos };
+    await saveSlides(updatedSlides);
+  
+    setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
+    closeAddVideoModal();
+  };
+
+  const handleDeleteVideo = async (index) => {
+    const updatedSlides = [...presentation.slides];
+    const updatedVideos = updatedSlides[currentSlideIndex].videos.filter((_, i) => i !== index);
+  
+    updatedSlides[currentSlideIndex] = { ...updatedSlides[currentSlideIndex], videos: updatedVideos };
+    await saveSlides(updatedSlides);
+  
+    setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
   };
 
   return (
@@ -441,7 +505,7 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} />
+          <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} onAddVideo={openAddVideoModal} />
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -468,7 +532,40 @@ const EditPresentation = () => {
                 : null
             }
           />
+          <AddVideoModal
+            isOpen={isAddVideoModalOpen}
+            onClose={closeAddVideoModal}
+            onSave={handleSaveVideo}
+            video={
+              editingVideoIndex !== null 
+                ? presentation.slides[currentSlideIndex].videos[editingVideoIndex] 
+                : null}
+          />
           <SlideContainer>
+            {presentation.slides[currentSlideIndex]?.videos?.map((video, index) => (
+              <StyledVideo
+                key={`video-${index}`}
+                $size={video.size}
+                $position={video.position || { x: 0, y: 0 }}
+                $zIndex={video.zIndex}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleDeleteVideo(index);
+                }}
+                onDoubleClick={() => openEditVideoModal(index)} 
+              >
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${
+                    video.autoplay ? 1 : 0
+                  }&mute=${video.autoplay ? 1 : 0}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="YouTube Video"
+                ></iframe>
+              </StyledVideo>
+            ))}
             {presentation.slides[currentSlideIndex]?.images?.map((img, index) => (
               <StyledImage
                 key={index}
