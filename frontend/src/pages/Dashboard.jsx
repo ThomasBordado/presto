@@ -10,15 +10,65 @@ import PresentationCard from '../components/PresentationCard';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 
-const NewPresentationButton = styled.button`
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #4CAF50;
+const Container = styled.div`
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 0;
+  margin: -8px;
+`;
+
+const HeaderBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
+`;
+
+const DashboardTitle = styled.h1`
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 36px;
+`;
+
+const NewPresentationButton = styled.button`
+  width: 100%;
+  max-width: 1367px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
-  margin-bottom: 20px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const PresentationSection = styled.div`
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 20px;
+  text-align: left;
+  font-family: Arial, sans-serif;
+`;
+
+const PresentationHeading = styled.h3`
+  color: #333333;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  text-indent: 16px;
 `;
 
 function Dashboard() {
@@ -101,11 +151,15 @@ function Dashboard() {
   };
 
   return (
-    <div>
+    <Container>
+      <HeaderBar>
+        <DashboardTitle>Dashboard</DashboardTitle>
+        <Logout />
+      </HeaderBar>
       <ErrorDisplay />
-      <h2>Dashboard</h2>
-      <Logout />
-      <NewPresentationButton onClick={handleOpenModal}>New Presentation</NewPresentationButton>
+      <ButtonContainer>
+        <NewPresentationButton onClick={handleOpenModal}>New Presentation</NewPresentationButton>
+      </ButtonContainer>
 
       {isModalOpen && (
         <ModalMedium onClose={handleCloseModal}>
@@ -126,8 +180,8 @@ function Dashboard() {
         </ModalMedium>
       )}
 
-      <div>
-        <h3>Your Presentations</h3>
+      <PresentationSection>
+        <PresentationHeading>Your Presentations</PresentationHeading>
         <CardContainer>
           {presentations.map((presentation) => (
             <PresentationCard
@@ -140,8 +194,8 @@ function Dashboard() {
             />
           ))}
         </CardContainer>
-      </div>
-    </div>
+      </PresentationSection>
+    </Container>
   );
 }
 
