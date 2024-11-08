@@ -39,6 +39,7 @@ const EditPresentation = () => {
   const [editingImageIndex, setEditingImageIndex] = useState(null);
   const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
+  const [isAnyModalOpen, setModalOpen] = useState(false);
   const { showError, ErrorDisplay } = useErrorMessage();
   
   useEffect(() => {
@@ -111,18 +112,22 @@ const EditPresentation = () => {
 
   const openDeleteModal = () => {
     setIsDeleteModalOpen(true);
+    setModalOpen(true);
   };
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
+    setModalOpen(false);
   };
 
   const openTitleEditModal = () => {
     setIsTitleEditModalOpen(true);
+    setModalOpen(true);
   };
 
   const closeTitleEditModal = () => {
     setIsTitleEditModalOpen(false);
+    setModalOpen(false);
   };
 
   const handleTitleSave = async () => {
@@ -255,7 +260,7 @@ const EditPresentation = () => {
   const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
 
   // Keyboard navigation of left and right arrow keys on slides
-  const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen || isAddImageModalOpen;
+  // const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen || isAddImageModalOpen;
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!isAnyModalOpen) {
@@ -267,16 +272,24 @@ const EditPresentation = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlideIndex, presentation?.slides.length, isAnyModalOpen]);
 
-  const openAddTextModal = () => setIsAddTextModalOpen(true);
-  const closeAddTextModal = () => setIsAddTextModalOpen(false);
+  const openAddTextModal = () => {
+    setIsAddTextModalOpen(true);
+    setModalOpen(true);
+  }
+  const closeAddTextModal = () => {
+    setIsAddTextModalOpen(false);
+    setModalOpen(false);
+  }
 
   const openEditTextModal = (index) => {
     setEditingTextBoxIndex(index);
     setIsEditTextModalOpen(true);
+    setModalOpen(true);
   };
   const closeEditTextModal = () => {
     setIsEditTextModalOpen(false);
     setEditingTextBoxIndex(null);
+    setModalOpen(false);
   };
 
   const handleSaveTextBox = async (textBox) => {
@@ -332,15 +345,20 @@ const EditPresentation = () => {
     }));
   };
 
-  const openAddImageModal = () => setIsAddImageModalOpen(true);
+  const openAddImageModal = () => {
+    setIsAddImageModalOpen(true);
+    setModalOpen(true);
+  }
   const closeAddImageModal = () => {
     setIsAddImageModalOpen(false);
     setEditingImageIndex(null);
+    setModalOpen(false);
   };
 
   const openEditImageModal = (index) => {
     setEditingImageIndex(index);
     setIsAddImageModalOpen(true);
+    setModalOpen(true);
   };
 
   const handleSaveImage = async (imageData) => {
@@ -403,16 +421,19 @@ const EditPresentation = () => {
   const openAddVideoModal = () => {
     setEditingVideoIndex(null);
     setIsAddVideoModalOpen(true);
+    setModalOpen(true);
   };
   
   const closeAddVideoModal = () => {
     setIsAddVideoModalOpen(false);
     setEditingVideoIndex(null);
+    setModalOpen(false);
   };
   
   const openEditVideoModal = (index) => {
     setEditingVideoIndex(index);
     setIsAddVideoModalOpen(true);
+    setModalOpen(true);
   };
 
   const handleSaveVideo = async (videoData) => {
