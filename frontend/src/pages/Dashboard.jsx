@@ -11,7 +11,7 @@ import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  background-color: #ffffff;
+  background-color: #ebebeb;
   min-height: 100vh;
   padding: 0;
   margin: -8px;
@@ -29,7 +29,7 @@ const HeaderBar = styled.div`
 const DashboardTitle = styled.h1`
   font-family: Arial, sans-serif;
   font-size: 24px;
-  color: #ffffff;
+  color: #ebebeb;
   margin: 0;
 `;
 
@@ -69,6 +69,48 @@ const PresentationHeading = styled.h3`
   font-family: Arial, sans-serif;
   font-size: 24px;
   text-indent: 16px;
+`;
+
+const ModalTitle = styled.h3`
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const FormLabel = styled.label`
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 function Dashboard() {
@@ -163,20 +205,22 @@ function Dashboard() {
 
       {isModalOpen && (
         <ModalMedium onClose={handleCloseModal}>
-          <h3>Create a New Presentation</h3>
-          <input
+          <ModalTitle>Create a Presentation</ModalTitle>
+          <FormLabel>Title:</FormLabel>
+          <InputField
             type="text"
             value={presentationName}
             onChange={(e) => setPresentationName(e.target.value)}
             placeholder="Enter presentation name"
           />
-          <input
+          <FormLabel>Description:</FormLabel>
+          <InputField
             type="text"
             value={presentationDescription}
             onChange={(e) => setPresentationDescription(e.target.value)}
             placeholder="Enter description"
           />
-          <button onClick={handleCreatePresentation}>Create</button>
+          <SubmitButton onClick={handleCreatePresentation}>Create</SubmitButton>
         </ModalMedium>
       )}
 
