@@ -14,6 +14,8 @@ import EditTextModal from '../components/EditTextModal';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 import TextBox from '../components/TextBox';
+import AddImageModal from '../components/AddImageModal';
+import StyledImage from '../components/StyledImage';
 
 const Title = styled.h3`
   line-break: anywhere;
@@ -31,6 +33,8 @@ const EditPresentation = () => {
   const [isAddTextModalOpen, setIsAddTextModalOpen] = useState(false);
   const [isEditTextModalOpen, setIsEditTextModalOpen] = useState(false);
   const [editingTextBoxIndex, setEditingTextBoxIndex] = useState(null);
+  const [isAddImageModalOpen, setIsAddImageModalOpen] = useState(false);
+  const [editingImageIndex, setEditingImageIndex] = useState(null);
   const { showError, ErrorDisplay } = useErrorMessage();
   
   useEffect(() => {
@@ -247,7 +251,7 @@ const EditPresentation = () => {
   const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
 
   // Keyboard navigation of left and right arrow keys on slides
-  const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen;
+  const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen || isAddImageModalOpen;
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!isAnyModalOpen) {
@@ -274,11 +278,21 @@ const EditPresentation = () => {
   const handleSaveTextBox = async (textBox) => {
     const updatedSlides = [...presentation.slides];
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
+    const images = updatedSlides[currentSlideIndex].images || [];
 
-    const updatedTextBoxes =
-      editingTextBoxIndex !== null
-        ? textBoxes.map((box, i) => (i === editingTextBoxIndex ? textBox : box))
-        : [...textBoxes, textBox];
+
+    let updatedTextBoxes = null;
+    if (editingTextBoxIndex !== null) {
+      updatedTextBoxes = textBoxes.map((box, i) => (i === editingTextBoxIndex ? textBox : box));
+    } else {
+      const highestZIndex = Math.max(
+        ...(textBoxes).map((box) => box.zIndex || 0),
+        ...(images).map((img) => img.zIndex || 0),
+        0
+      );
+      const newTextBox = { ...textBox, zIndex: highestZIndex + 1 };
+      updatedTextBoxes = [...textBoxes, newTextBox];
+    }
 
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
@@ -302,6 +316,72 @@ const EditPresentation = () => {
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
+    };
+
+    await saveSlides(updatedSlides);
+
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+  };
+
+  const openAddImageModal = () => setIsAddImageModalOpen(true);
+  const closeAddImageModal = () => {
+    setIsAddImageModalOpen(false);
+    setEditingImageIndex(null);
+  };
+
+  const openEditImageModal = (index) => {
+    setEditingImageIndex(index);
+    setIsAddImageModalOpen(true);
+  };
+
+  const handleSaveImage = async (imageData) => {
+    const updatedSlides = [...presentation.slides];
+    const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
+    const images = updatedSlides[currentSlideIndex].images || [];
+
+
+    let updatedImages = null;
+    if (editingImageIndex !== null) {
+      updatedImages = images.map((img, i) => 
+        i === editingImageIndex
+          ? { ...imageData, zIndex: img.zIndex ?? imageData.zIndex }
+          : img
+      );
+    } else {
+      const highestZIndex = Math.max(
+        ...(textBoxes).map((box) => box.zIndex || 0),
+        ...(images).map((img) => img.zIndex || 0),
+        0
+      );
+      const newImageData = { ...imageData, zIndex: highestZIndex + 1 };
+      updatedImages = [...images, newImageData];
+    }
+
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      images: updatedImages,
+    };
+
+    await saveSlides(updatedSlides);
+
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+
+    closeAddImageModal();
+  };
+
+  const handleDeleteImage = async (index) => {
+    const updatedSlides = [...presentation.slides];
+    const updatedImages = updatedSlides[currentSlideIndex].images.filter((_, i) => i !== index);
+
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      images: updatedImages,
     };
 
     await saveSlides(updatedSlides);
@@ -361,7 +441,7 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          <ToolPanel onAddText={openAddTextModal} />
+          <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} />
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -378,7 +458,32 @@ const EditPresentation = () => {
                 : null
             }
           />
+          <AddImageModal
+            isOpen={isAddImageModalOpen}
+            onClose={closeAddImageModal}
+            onSave={handleSaveImage}
+            image={
+              editingImageIndex !== null
+                ? presentation.slides[currentSlideIndex].images[editingImageIndex]
+                : null
+            }
+          />
           <SlideContainer>
+            {presentation.slides[currentSlideIndex]?.images?.map((img, index) => (
+              <StyledImage
+                key={index}
+                src={img.src}
+                alt={img.description}
+                $size={img.size}
+                $position={img.position || { x: 0, y: 0 }}
+                $zIndex={img.zIndex}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleDeleteImage(index);
+                }}
+                onDoubleClick={() => openEditImageModal(index)}
+              />
+            ))}
             {presentation.slides[currentSlideIndex]?.textBoxes?.map((box, index) => (
               <TextBox
                 key={index}
@@ -386,6 +491,7 @@ const EditPresentation = () => {
                 $fontSize={box.fontSize}
                 $color={box.color}
                 $position={box.position || { x: 0, y: 0 }}
+                $zIndex={box.zIndex}
                 onContextMenu={(e) => {
                   e.preventDefault();
                   handleDeleteTextBox(index);
