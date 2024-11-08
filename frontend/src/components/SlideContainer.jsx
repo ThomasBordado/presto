@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 const SlideContainer = styled.div`
   position: relative;
-  width: 100%;
-  max-width: 100%;
+  aspect-ratio: 16 / 9;
   height: 65vh;
   border: 1px solid black;
   border-radius: 8px;
