@@ -3,6 +3,22 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import config from '../../backend.config.json';
 import { getToken, removeToken } from '../Auth';
+import styled from 'styled-components';
+
+const LogoutButton = styled.button`
+  font-family: Arial, sans-serif;
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #c82333;
+  }
+`;
 
 function Logout() {
   const navigate = useNavigate();
@@ -26,7 +42,7 @@ function Logout() {
     }
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <LogoutButton onClick={handleLogout}>Logout</LogoutButton>;
 }
 
 export default Logout;

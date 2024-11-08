@@ -14,7 +14,7 @@ const Container = styled.div`
   width: 100vw;
   margin: -8px;
   padding: 0;
-  background-color: rgba(0, 0, 0, 0.8);;
+  background-color: rgba(0, 0, 0, 0.8);
 `;
 
 const LoginBox = styled.div`
