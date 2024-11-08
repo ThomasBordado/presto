@@ -15,12 +15,11 @@ const Overlay = styled.div`
 `;
 
 const Content = styled.div`
-  background: #fff;
-  padding: 20px;
+  background-color: #ebebeb;
+  padding: 40px;
   border-radius: 8px;
-  width: 50vh;
-  height: 50vh;
-  max-width: 80%;
+  width: 320px;
+  text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
 `;
@@ -32,7 +31,12 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 1.5rem;
+  color: rgba(0, 0, 0, 0.8); /* Dark color for the close button */
   cursor: pointer;
+
+  &:hover {
+    color: #dc3545;
+  }
 `;
 
 function ModalMedium({ onClose, children }) {

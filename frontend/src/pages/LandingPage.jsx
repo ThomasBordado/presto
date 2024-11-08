@@ -18,36 +18,56 @@ const Navbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: rgba(0, 0, 0, 0.8);
+  padding: 16px 20px;
+  background-color: #333333;
   color: white;
-  position: relative;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  font-size: 24px;
   font-family: Arial, sans-serif;
 `;
 
+const Title = styled.h1`
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  margin: 0;
+`;
+
 const NavLinks = styled.div`
+  display: flex;
+  gap: 15px;
+
   a {
-    color: white;
-    text-decoration: none;
-    margin-left: 15px;
     font-family: Arial, sans-serif;
-    font-size: 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      text-decoration: underline;
+    }
   }
 
-  a:hover {
-    text-decoration: underline;
+  a.register {
+    background-color: white;
+    color: #333;
+    padding: 8px 16px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
   }
 `;
 
 const PageText = styled.div`
   text-align: center;
   margin-top: 70px;
-  color: black;
+  color: #007bff;
   font-family: Arial, sans-serif;
   font-size: 30px;
 `;
@@ -59,7 +79,7 @@ function LandingPage() {
         <Title>Presto</Title>
         <NavLinks>
           <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          <Link to="/register" className="register">Register</Link>
         </NavLinks>
       </Navbar>
       <PageText>
