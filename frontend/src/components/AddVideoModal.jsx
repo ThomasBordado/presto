@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
+import { v4 as uuidv4 } from 'uuid';
 
 const FormField = styled.div`
   margin-bottom: 10px;
@@ -15,8 +16,6 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
   const widthRef = useRef();
   const heightRef = useRef();
   const autoplayRef = useRef();
-  const xPosRef = useRef();
-  const yPosRef = useRef();
 
   useEffect(() => {
     if (video) {
@@ -50,6 +49,7 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
     }
 
     const newVideo = {
+      id: uuidv4(),
       url,
       videoId,
       autoplay,
@@ -64,18 +64,11 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
   const handleEditSave = () => {
     const width = parseInt(widthRef.current.value, 10);
     const height = parseInt(heightRef.current.value, 10);
-    const xpos = parseInt(xPosRef.current.value, 10);
-    const ypos = parseInt(yPosRef.current.value, 10);
     const autoplay = autoplayRef.current.checked;
     const url = urlRef.current.value.trim();
 
-    if (width < 0 || width > 100 || height < 0 || height > 100 || xpos < 0 || xpos > 100 || ypos < 0 || ypos > 100) {
-        showError("Width, Height, and Position values must be between 0 and 100.");
-        return;
-    }
-
-    if (xpos + width > 100 || ypos + height > 100) {
-        showError("Image can't be moved here due to overflow.");
+    if (width < 0 || width > 100 || height < 0 || height > 100) {
+        showError("Width and Height values must be between 0 and 100.");
         return;
     }
 
@@ -91,11 +84,11 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
     }
 
     const newVideo = {
+      ...video,
       url,
       videoId,
       autoplay,
-      size: { width, height },
-      position: { x: xpos, y: ypos },
+      size: { width, height }
     };
 
     onSave(newVideo);
@@ -136,20 +129,6 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
           Auto-play
         </label>
       </FormField>
-
-      {video && (
-        <>
-          <FormField>
-            <label>Position X (%):</label>
-            <input type="number" ref={xPosRef} defaultValue={video?.position?.x || 0} min="0" max="100" />
-          </FormField>
-
-          <FormField>
-            <label>Position Y (%):</label>
-            <input type="number" ref={yPosRef} defaultValue={video?.position?.y || 0} min="0" max="100" />
-          </FormField>
-        </>
-      )}
 
       <button onClick={video ? handleEditSave : handleAddSave}>
         {video ? "Save Changes" : "Add Video"}
