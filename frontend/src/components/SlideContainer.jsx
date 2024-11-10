@@ -12,5 +12,4 @@ const SlideContainer = styled.div`
   overflow: hidden;
 `;
 
-
 export default SlideContainer;
