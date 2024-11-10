@@ -438,7 +438,6 @@ const EditPresentation = () => {
   const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
 
   // Keyboard navigation of left and right arrow keys on slides
-  // const isAnyModalOpen = isDeleteModalOpen || isTitleEditModalOpen || isAddTextModalOpen || isEditTextModalOpen || isAddImageModalOpen;
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!isAnyModalOpen) {
@@ -549,9 +548,9 @@ const EditPresentation = () => {
 
 
     let updatedImages = null;
-    if (editingImageIndex !== null) {
-      updatedImages = images.map((img, i) =>
-        i === editingImageIndex
+    if (editingImageIndex) {
+      updatedImages = images.map((img) =>
+      (img.id === editingImageIndex)
           ? { ...imageData, zIndex: img.zIndex ?? imageData.zIndex }
           : img
       );
@@ -581,9 +580,9 @@ const EditPresentation = () => {
     closeAddImageModal();
   };
 
-  const handleDeleteImage = async (index) => {
+  const handleDeleteImage = async (id) => {
     const updatedSlides = [...presentation.slides];
-    const updatedImages = updatedSlides[currentSlideIndex].images.filter((_, i) => i !== index);
+    const updatedImages = updatedSlides[currentSlideIndex].images.filter((img) => img.id !== id);
 
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
@@ -610,8 +609,8 @@ const EditPresentation = () => {
     setModalOpen(false);
   };
 
-  const openEditVideoModal = (index) => {
-    setEditingVideoIndex(index);
+  const openEditVideoModal = (id) => {
+    setEditingVideoIndex(id);
     setIsAddVideoModalOpen(true);
     setModalOpen(true);
   };
@@ -621,11 +620,11 @@ const EditPresentation = () => {
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
     const videos = updatedSlides[currentSlideIndex].videos || [];
-
+    console.log(videoData);
     let updatedVideos = null;
-    if (editingVideoIndex !== null) {
-      updatedVideos = videos.map((vid, i) =>
-        i === editingVideoIndex
+    if (editingVideoIndex) {
+      updatedVideos = videos.map((vid) =>
+      (vid.id === editingVideoIndex)
           ? { ...videoData, zIndex: vid.zIndex ?? videoData.zIndex }
           : vid
       );
@@ -647,9 +646,9 @@ const EditPresentation = () => {
     closeAddVideoModal();
   };
 
-  const handleDeleteVideo = async (index) => {
+  const handleDeleteVideo = async (id) => {
     const updatedSlides = [...presentation.slides];
-    const updatedVideos = updatedSlides[currentSlideIndex].videos.filter((_, i) => i !== index);
+    const updatedVideos = updatedSlides[currentSlideIndex].videos.filter((vid) => vid.id !== id);
 
     updatedSlides[currentSlideIndex] = { ...updatedSlides[currentSlideIndex], videos: updatedVideos };
     await saveSlides(updatedSlides);
@@ -678,6 +677,47 @@ const EditPresentation = () => {
     }));
   };
   
+  const updateImage = async (id, updatedProps) => {
+    const updatedSlides = [...presentation.slides];
+    const images = updatedSlides[currentSlideIndex].images;
+  
+    const updatedImages = images.map((img) =>
+      img.id === id ? { ...img, ...updatedProps } : img
+    );
+  
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      images: updatedImages,
+    };
+  
+    await saveSlides(updatedSlides);
+  
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+  };
+
+  const updateVideo = async (id, updatedProps) => {
+    const updatedSlides = [...presentation.slides];
+    const videos = updatedSlides[currentSlideIndex].videos;
+  
+    const updatedVideos = videos.map((vid) =>
+      vid.id === id ? { ...vid, ...updatedProps } : vid
+    );
+  
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      videos: updatedVideos,
+    };
+  
+    await saveSlides(updatedSlides);
+  
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+  };
 
   return (
     <Container>
@@ -764,7 +804,7 @@ const EditPresentation = () => {
             onSave={handleSaveImage}
             image={
               editingImageIndex !== null
-                ? presentation.slides[currentSlideIndex].images[editingImageIndex]
+                ? presentation.slides[currentSlideIndex].images.find((img) => img.id === editingImageIndex)
                 : null
             }
           />
@@ -774,21 +814,19 @@ const EditPresentation = () => {
             onSave={handleSaveVideo}
             video={
               editingVideoIndex !== null
-                ? presentation.slides[currentSlideIndex].videos[editingVideoIndex]
+                ? presentation.slides[currentSlideIndex].videos.find((vid) => vid.id === editingVideoIndex)
                 : null}
           />
           <SlideContainer>
-            {presentation.slides[currentSlideIndex]?.videos?.map((video, index) => (
+            {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
               <StyledVideo
-                key={`video-${index}`}
-                $size={video.size}
-                $position={video.position || { x: 0, y: 0 }}
-                $zIndex={video.zIndex}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleDeleteVideo(index);
-                }}
-                onDoubleClick={() => openEditVideoModal(index)}
+                key={video.id}
+                size={video.size}
+                position={video.position || { x: 0, y: 0 }}
+                zIndex={video.zIndex}
+                onDelete={() => handleDeleteVideo(video.id)}
+                onEdit={() => openEditVideoModal(video.id)}
+                onPositionChange={(newPosition) => updateVideo(video.id, { position: newPosition })}
               >
                 <iframe
                   width="100%"
@@ -801,19 +839,17 @@ const EditPresentation = () => {
                 ></iframe>
               </StyledVideo>
             ))}
-            {presentation.slides[currentSlideIndex]?.images?.map((img, index) => (
+            {presentation.slides[currentSlideIndex]?.images?.map((img) => (
               <StyledImage
-                key={index}
+                key={img.id}
                 src={img.src}
                 alt={img.description}
-                $size={img.size}
-                $position={img.position || { x: 0, y: 0 }}
-                $zIndex={img.zIndex}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleDeleteImage(index);
-                }}
-                onDoubleClick={() => openEditImageModal(index)}
+                size={img.size}
+                position={img.position || { x: 0, y: 0 }}
+                zIndex={img.zIndex}
+                onDelete={() => handleDeleteImage(img.id)}
+                onEdit={() => openEditImageModal(img.id)}
+                onPositionChange={(newPosition) => updateImage(img.id, { position: newPosition })}
               />
             ))}
             {presentation.slides[currentSlideIndex]?.textBoxes?.map((box) => (

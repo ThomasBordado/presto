@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import styled from 'styled-components';
 
@@ -31,11 +31,25 @@ const ResizeHandle = styled.div`
 
 const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChange, onDelete, onEdit }) => {
   const [isSelected, setIsSelected] = useState(false);
+  const containerRef = useRef(null);
 
   const handleClickInside = (e) => {
     e.stopPropagation();
     setIsSelected(true);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsSelected(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleStop = (e, data) => {
     onPositionChange({ x: data.x, y: data.y });
@@ -46,8 +60,10 @@ const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChan
       defaultPosition={{ x: position.x, y: position.y }}
       onStop={handleStop}
       bounds="parent"
+      disabled={!isSelected}
     >
       <TextBoxContainer
+        ref={containerRef}
         $size={size}
         $fontSize={fontSize}
         $color={color}
