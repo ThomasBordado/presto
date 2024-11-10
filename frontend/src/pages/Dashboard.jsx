@@ -75,7 +75,7 @@ const ModalTitle = styled.h3`
   font-family: Arial, sans-serif;
   font-size: 24px;
   color: rgba(0, 0, 0, 0.8);
-  margin-bottom: 20px;
+  margin: 0 0 20px 0;
   text-align: center;
 `;
 
