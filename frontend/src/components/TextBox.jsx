@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Draggable from 'react-draggable';
 import styled from 'styled-components';
 
-const TextBox = styled.div`
+const TextBoxContainer = styled.div`
   position: absolute;
-  top: ${({ $position }) => $position.y}%;
-  left: ${({ $position }) => $position.x}%;
   width: ${({ $size }) => $size.width}%;
   height: ${({ $size }) => $size.height}%;
   font-size: ${({ $fontSize }) => $fontSize}em;
@@ -16,6 +15,62 @@ const TextBox = styled.div`
   text-align: left;
   line-height: 1.2;
   background-color: white;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #888;
+  }
 `;
+
+const ResizeHandle = styled.div`
+  width: 5px;
+  height: 5px;
+  background-color: black;
+  position: absolute;
+`;
+
+const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChange, onDelete, onEdit }) => {
+  const [isSelected, setIsSelected] = useState(false);
+
+  const handleClickInside = (e) => {
+    e.stopPropagation();
+    setIsSelected(true);
+  };
+
+  const handleStop = (e, data) => {
+    onPositionChange({ x: data.x, y: data.y });
+  };
+
+  return (
+    <Draggable
+      defaultPosition={{ x: position.x, y: position.y }}
+      onStop={handleStop}
+      bounds="parent"
+    >
+      <TextBoxContainer
+        $size={size}
+        $fontSize={fontSize}
+        $color={color}
+        $zIndex={zIndex}
+        onClick={handleClickInside}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          onDelete();
+        }}
+        onDoubleClick={() => onEdit()}
+      >
+        {text}
+        {isSelected && (
+          <>
+            <ResizeHandle style={{ top: 0, left: 0, cursor: 'nw-resize' }} />
+            <ResizeHandle style={{ top: 0, right: 0, cursor: 'ne-resize' }} />
+            <ResizeHandle style={{ bottom: 0, left: 0, cursor: 'sw-resize' }} />
+            <ResizeHandle style={{ bottom: 0, right: 0, cursor: 'se-resize' }} />
+          </>
+        )}
+      </TextBoxContainer>
+    </Draggable>
+  );
+};
 
 export default TextBox;

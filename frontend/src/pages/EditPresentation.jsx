@@ -459,8 +459,8 @@ const EditPresentation = () => {
     setModalOpen(false);
   }
 
-  const openEditTextModal = (index) => {
-    setEditingTextBoxIndex(index);
+  const openEditTextModal = (id) => {
+    setEditingTextBoxIndex(id);
     setIsEditTextModalOpen(true);
     setModalOpen(true);
   };
@@ -475,48 +475,50 @@ const EditPresentation = () => {
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
     const videos = updatedSlides[currentSlideIndex].videos || [];
-
-
-    let updatedTextBoxes = null;
-    if (editingTextBoxIndex !== null) {
-      updatedTextBoxes = textBoxes.map((box, i) => (i === editingTextBoxIndex ? textBox : box));
+  
+    let updatedTextBoxes;
+  
+    if (editingTextBoxIndex) {
+      updatedTextBoxes = textBoxes.map((box) => (box.id === editingTextBoxIndex ? textBox : box));
     } else {
       const highestZIndex = Math.max(
-        ...(textBoxes).map((box) => box.zIndex || 0),
-        ...(images).map((img) => img.zIndex || 0),
-        ...(videos).map((vid) => vid.zIndex || 0),
+        ...textBoxes.map((box) => box.zIndex || 0),
+        ...images.map((img) => img.zIndex || 0),
+        ...videos.map((vid) => vid.zIndex || 0),
         0
       );
+      
       const newTextBox = { ...textBox, zIndex: highestZIndex + 1 };
       updatedTextBoxes = [...textBoxes, newTextBox];
     }
-
+  
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
     };
-
+  
     await saveSlides(updatedSlides);
-
+  
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
     }));
-
+  
     closeEditTextModal();
   };
 
-  const handleDeleteTextBox = async (index) => {
+  const handleDeleteTextBox = async (id) => {
     const updatedSlides = [...presentation.slides];
-    const updatedTextBoxes = updatedSlides[currentSlideIndex].textBoxes.filter((_, i) => i !== index);
 
+    const updatedTextBoxes = updatedSlides[currentSlideIndex].textBoxes.filter((box) => box.id !== id);
+  
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
     };
-
+  
     await saveSlides(updatedSlides);
-
+  
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
@@ -533,8 +535,8 @@ const EditPresentation = () => {
     setModalOpen(false);
   };
 
-  const openEditImageModal = (index) => {
-    setEditingImageIndex(index);
+  const openEditImageModal = (id) => {
+    setEditingImageIndex(id);
     setIsAddImageModalOpen(true);
     setModalOpen(true);
   };
@@ -655,6 +657,28 @@ const EditPresentation = () => {
     setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
   };
 
+  const updateTextBox = async (id, updatedProps) => {
+    const updatedSlides = [...presentation.slides];
+    const textBoxes = updatedSlides[currentSlideIndex].textBoxes;
+  
+    const updatedTextBoxes = textBoxes.map((box) =>
+      box.id === id ? { ...box, ...updatedProps } : box
+    );
+  
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      textBoxes: updatedTextBoxes,
+    };
+  
+    await saveSlides(updatedSlides);
+  
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
+    }));
+  };
+  
+
   return (
     <Container>
       <ErrorDisplay />
@@ -730,7 +754,7 @@ const EditPresentation = () => {
             onSave={handleSaveTextBox}
             textBox={
               editingTextBoxIndex !== null
-                ? presentation.slides[currentSlideIndex].textBoxes[editingTextBoxIndex]
+                ? presentation.slides[currentSlideIndex].textBoxes.find((box) => box.id === editingTextBoxIndex)
                 : null
             }
           />
@@ -792,22 +816,19 @@ const EditPresentation = () => {
                 onDoubleClick={() => openEditImageModal(index)}
               />
             ))}
-            {presentation.slides[currentSlideIndex]?.textBoxes?.map((box, index) => (
+            {presentation.slides[currentSlideIndex]?.textBoxes?.map((box) => (
               <TextBox
-                key={index}
-                $size={box.size}
-                $fontSize={box.fontSize}
-                $color={box.color}
-                $position={box.position || { x: 0, y: 0 }}
-                $zIndex={box.zIndex}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleDeleteTextBox(index);
-                }}
-                onDoubleClick={() => openEditTextModal(index)}
-              >
-                {box.text}
-              </TextBox>
+                key={box.id}
+                size={box.size}
+                fontSize={box.fontSize}
+                color={box.color}
+                position={box.position || { x: 0, y: 0 }}
+                zIndex={box.zIndex}
+                text={box.text}
+                onDelete={() => handleDeleteTextBox(box.id)}
+                onEdit={() => openEditTextModal(box.id)}
+                onPositionChange={(newPosition) => updateTextBox(box.id, { position: newPosition })}
+              />
             ))}
             <SlideNumber currentSlideIndex={currentSlideIndex} />
           </SlideContainer>

@@ -17,8 +17,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
   const colorRef = useRef();
   const widthRef = useRef();
   const heightRef = useRef();
-  const xPosRef = useRef();
-  const yPosRef = useRef();
 
   useEffect(() => {
     if (textBox) {
@@ -27,8 +25,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       colorRef.current.value = textBox.color;
       widthRef.current.value = textBox.size.width;
       heightRef.current.value = textBox.size.height;
-      xPosRef.current.value = textBox.position?.x ?? 0;
-      yPosRef.current.value = textBox.position?.y ?? 0;
     }
   }, [textBox]);
 
@@ -40,19 +36,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       return;
     }
 
-    const xpos = parseInt(xPosRef.current.value, 10);
-    const ypos = parseInt(yPosRef.current.value, 10);
-
-    if (xpos < 0 || xpos > 100 || ypos < 0 || ypos > 100) {
-      showError('Position must be between 0 and 100.');
-      return;
-    }
-
-    if (xpos + width > 100 || ypos + height > 100) {
-      showError('Textbox can\'t be moved here due to overflow.');
-      return;
-    }
-
     const updatedTextBox = {
       ...textBox,
       text: textRef.current.value,
@@ -61,10 +44,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       size: {
         width: parseInt(widthRef.current.value, 10),
         height: parseInt(heightRef.current.value, 10),
-      },
-      position: {
-        x: parseInt(xPosRef.current.value, 10),
-        y: parseInt(yPosRef.current.value, 10),
       },
     };
 
@@ -102,16 +81,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       <FormField>
         <label>Height (%):</label>
         <input type="number" ref={heightRef} />
-      </FormField>
-
-      <FormField>
-        <label>Position X (%):</label>
-        <input type="number" ref={xPosRef} min="0" max="100" />
-      </FormField>
-
-      <FormField>
-        <label>Position Y (%):</label>
-        <input type="number" ref={yPosRef} min="0" max="100" />
       </FormField>
 
       <button onClick={handleSave}>Save Changes</button>

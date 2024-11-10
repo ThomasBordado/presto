@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
+import { v4 as uuidv4 } from 'uuid';
 
 const FormField = styled.div`
   margin-bottom: 15px;
@@ -27,6 +28,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
     }
 
     const newTextBox = {
+      id: uuidv4(),
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
       color: colorRef.current.value,
