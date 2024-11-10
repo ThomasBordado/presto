@@ -663,15 +663,15 @@ const EditPresentation = () => {
           <HeaderBar>
             <PresentationTitle>
               {presentation.name}
-              <IconButton onClick={() => setIsTitleEditModalOpen(true)}>
+              <IconButton onClick={openTitleEditModal}>
                 <FaEdit />
               </IconButton>
             </PresentationTitle>
             <ButtonGroup>
-              <BackButton onClick={() => navigate('/dashboard')}>
+              <BackButton onClick={handleBack}>
                 Back
               </BackButton>
-              <DeleteButton onClick={() => setIsDeleteModalOpen(true)}>
+              <DeleteButton onClick={openDeleteModal}>
                 Delete Presentation
               </DeleteButton>
               <Logout />
