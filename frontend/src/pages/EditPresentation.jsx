@@ -100,6 +100,102 @@ const DeleteButton = styled.button`
   }
 `;
 
+const ModalTitle = styled.h3`
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0 0 20px 0;
+  text-align: center;
+`;
+
+const FormLabel = styled.label`
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+
+const ThumbnailField = styled.input`
+  width: 100%;
+  padding: 8px 8px 8px 1px;
+  margin-top: 5px;
+`;
+
+const SaveButton = styled.button`
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ModalText = styled.p`
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  margin: 0 0 20px 0;
+  text-align: center;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const ConfirmButton = styled.button`
+  font-family: Arial, sans-serif;
+  width: 100px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #2196f3;
+  }
+`;
+
+const CancelButton = styled.button`
+  font-family: Arial, sans-serif;
+  width: 100px;
+  background-color: #f44336;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #f6656c;
+  }
+`;
+
 const EditPresentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -208,6 +304,11 @@ const EditPresentation = () => {
   };
 
   const handleTitleSave = async () => {
+    if (!newTitle.trim()) {
+      showError('Title cannot be empty.');
+      return;
+    }
+
     const token = getToken();
     if (!token) {
       console.error('No authentication token found');
@@ -500,13 +601,13 @@ const EditPresentation = () => {
     setIsAddVideoModalOpen(true);
     setModalOpen(true);
   };
-  
+
   const closeAddVideoModal = () => {
     setIsAddVideoModalOpen(false);
     setEditingVideoIndex(null);
     setModalOpen(false);
   };
-  
+
   const openEditVideoModal = (index) => {
     setEditingVideoIndex(index);
     setIsAddVideoModalOpen(true);
@@ -519,27 +620,27 @@ const EditPresentation = () => {
     const images = updatedSlides[currentSlideIndex].images || [];
     const videos = updatedSlides[currentSlideIndex].videos || [];
 
-      let updatedVideos = null;
-      if (editingVideoIndex !== null) {
-        updatedVideos = videos.map((vid, i) => 
-          i === editingVideoIndex
-            ? { ...videoData, zIndex: vid.zIndex ?? videoData.zIndex }
-            : vid
-        );
-      } else {
-        const highestZIndex = Math.max(
-          ...(textBoxes).map((box) => box.zIndex || 0),
-          ...(images).map((img) => img.zIndex || 0),
-          ...(videos).map((vid) => vid.zIndex || 0),
-          0
-        );
-        const newVideoData = { ...videoData, zIndex: highestZIndex + 1 };
-        updatedVideos = [...videos, newVideoData];
-      }
-  
+    let updatedVideos = null;
+    if (editingVideoIndex !== null) {
+      updatedVideos = videos.map((vid, i) =>
+        i === editingVideoIndex
+          ? { ...videoData, zIndex: vid.zIndex ?? videoData.zIndex }
+          : vid
+      );
+    } else {
+      const highestZIndex = Math.max(
+        ...(textBoxes).map((box) => box.zIndex || 0),
+        ...(images).map((img) => img.zIndex || 0),
+        ...(videos).map((vid) => vid.zIndex || 0),
+        0
+      );
+      const newVideoData = { ...videoData, zIndex: highestZIndex + 1 };
+      updatedVideos = [...videos, newVideoData];
+    }
+
     updatedSlides[currentSlideIndex] = { ...updatedSlides[currentSlideIndex], videos: updatedVideos };
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
     closeAddVideoModal();
   };
@@ -547,10 +648,10 @@ const EditPresentation = () => {
   const handleDeleteVideo = async (index) => {
     const updatedSlides = [...presentation.slides];
     const updatedVideos = updatedSlides[currentSlideIndex].videos.filter((_, i) => i !== index);
-  
+
     updatedSlides[currentSlideIndex] = { ...updatedSlides[currentSlideIndex], videos: updatedVideos };
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
   };
 
@@ -580,27 +681,31 @@ const EditPresentation = () => {
 
           {isTitleEditModalOpen && (
             <ModalMedium onClose={closeTitleEditModal}>
-              <h3>Edit Title</h3>
-              <input
+              <ModalTitle>Edit Presentation Details</ModalTitle>
+              <FormLabel>Title:</FormLabel>
+              <InputField
                 type="text"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Enter new title"
+                placeholder="Enter presentation name"
               />
-              <input
+              <FormLabel>Thumbnail:</FormLabel>
+              <ThumbnailField
                 type="file"
                 accept="image/*"
                 onChange={handleThumbnailChange}
               />
-              <button onClick={handleTitleSave}>Save</button>
+              <SaveButton onClick={handleTitleSave}>Save</SaveButton>
             </ModalMedium>
           )}
 
           {isDeleteModalOpen && (
             <ModalSmall onClose={closeDeleteModal}>
-              <p>Are you sure?</p>
-              <button onClick={handleDelete}>Yes</button>
-              <button onClick={closeDeleteModal}>No</button>
+              <ModalText>Are you sure?</ModalText>
+              <ButtonContainer>
+                <ConfirmButton onClick={handleDelete}>Yes</ConfirmButton>
+                <CancelButton onClick={closeDeleteModal}>No</CancelButton>
+              </ButtonContainer>
             </ModalSmall>
           )}
 
@@ -644,8 +749,8 @@ const EditPresentation = () => {
             onClose={closeAddVideoModal}
             onSave={handleSaveVideo}
             video={
-              editingVideoIndex !== null 
-                ? presentation.slides[currentSlideIndex].videos[editingVideoIndex] 
+              editingVideoIndex !== null
+                ? presentation.slides[currentSlideIndex].videos[editingVideoIndex]
                 : null}
           />
           <SlideContainer>
@@ -659,14 +764,13 @@ const EditPresentation = () => {
                   e.preventDefault();
                   handleDeleteVideo(index);
                 }}
-                onDoubleClick={() => openEditVideoModal(index)} 
+                onDoubleClick={() => openEditVideoModal(index)}
               >
                 <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${
-                    video.autoplay ? 1 : 0
-                  }&mute=${video.autoplay ? 1 : 0}`}
+                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0
+                    }&mute=${video.autoplay ? 1 : 0}`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   title="YouTube Video"
