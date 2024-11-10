@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FaEdit } from 'react-icons/fa';
 import ModalSmall from '../components/ModalSmall';
 import ModalMedium from '../components/ModalMedium';
 import axios from 'axios';
@@ -15,12 +16,88 @@ import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
 import TextBox from '../components/TextBox';
 import AddImageModal from '../components/AddImageModal';
+import Logout from '../components/Logout';
 import StyledImage from '../components/StyledImage';
 import AddVideoModal from '../components/AddVideoModal';
 import StyledVideo from '../components/StyledVideo'
 
-const Title = styled.h3`
+const Container = styled.div`
+  background-color: #ebebeb;
+  min-height: 100vh;
+  padding: 0;
+  margin: -8px;
+`;
+
+const HeaderBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+`;
+
+const PresentationTitle = styled.h1`
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: #ebebeb;
+  margin: 0;
   line-break: anywhere;
+  display: flex;
+  align-items: center;
+`;
+
+const IconButton = styled.button`
+  background: transparent;
+  border: none;
+  color: #ebebeb;
+  font-size: 18px;
+  margin-top: 5px;
+  margin-left: 8px;
+  cursor: pointer;
+
+  &:hover {
+    color: #bababa;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const BackButton = styled.button`
+  font-family: Arial, sans-serif;
+  background-color: transparent;
+  color: #2196f3;
+  border: 2px solid #2196f3;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #2196f3;
+    color: white;
+  }
+`;
+
+const DeleteButton = styled.button`
+  background-color: transparent;
+  color: #f44336;
+  margin-right: 10px;
+  border: 2px solid #f44336;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #f44336;
+    color: white;
+  }
 `;
 
 const EditPresentation = () => {
@@ -41,7 +118,7 @@ const EditPresentation = () => {
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
   const [isAnyModalOpen, setModalOpen] = useState(false);
   const { showError, ErrorDisplay } = useErrorMessage();
-  
+
   useEffect(() => {
     const fetchPresentation = async () => {
       const token = getToken();
@@ -370,7 +447,7 @@ const EditPresentation = () => {
 
     let updatedImages = null;
     if (editingImageIndex !== null) {
-      updatedImages = images.map((img, i) => 
+      updatedImages = images.map((img, i) =>
         i === editingImageIndex
           ? { ...imageData, zIndex: img.zIndex ?? imageData.zIndex }
           : img
@@ -478,24 +555,28 @@ const EditPresentation = () => {
   };
 
   return (
-    <div>
+    <Container>
       <ErrorDisplay />
       {presentation ? (
         <div>
-          <div>
-            <Title>{presentation.name}</Title>
-            <button onClick={openTitleEditModal}>Edit Title</button>
-          </div>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleThumbnailChange}
-          />
+          <HeaderBar>
+            <PresentationTitle>
+              {presentation.name}
+              <IconButton onClick={() => setIsTitleEditModalOpen(true)}>
+                <FaEdit />
+              </IconButton>
+            </PresentationTitle>
+            <ButtonGroup>
+              <BackButton onClick={() => navigate('/dashboard')}>
+                Back
+              </BackButton>
+              <DeleteButton onClick={() => setIsDeleteModalOpen(true)}>
+                Delete Presentation
+              </DeleteButton>
+              <Logout />
+            </ButtonGroup>
+          </HeaderBar>
           {/* Code to show thumbnail {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
-
-          <button onClick={handleBack}>Back</button>
-          <button onClick={openDeleteModal}>Delete Presentation</button>
 
           {isTitleEditModalOpen && (
             <ModalMedium onClose={closeTitleEditModal}>
@@ -505,6 +586,11 @@ const EditPresentation = () => {
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Enter new title"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
               />
               <button onClick={handleTitleSave}>Save</button>
             </ModalMedium>
@@ -625,7 +711,7 @@ const EditPresentation = () => {
       ) : (
         <p>Loading presentation...</p>
       )}
-    </div>
+    </Container>
   );
 };
 
