@@ -11,35 +11,23 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
 `;
 
 const Content = styled.div`
-  background: #fff;
-  padding: 20px;
+  background-color: #ebebeb;
+  padding: 30px;
   border-radius: 8px;
-  width: 10vh;
-  height: 10vh;
-  max-width: 80%;
+  width: 200px;
+  text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
 `;
 
 function ModalSmall({ onClose, children }) {
   return (
     <Overlay>
       <Content>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
         {children}
       </Content>
     </Overlay>

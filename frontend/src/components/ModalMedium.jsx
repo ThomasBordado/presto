@@ -31,7 +31,7 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: rgba(0, 0, 0, 0.8); /* Dark color for the close button */
+  color: rgba(0, 0, 0, 0.8);
   cursor: pointer;
 
   &:hover {
