@@ -20,8 +20,6 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
   useEffect(() => {
     if (video) {
       urlRef.current.value = video.url;
-      widthRef.current.value = video.size.width;
-      heightRef.current.value = video.size.height;
       autoplayRef.current.checked = video.autoplay;
     }
   }, [video]);
@@ -62,15 +60,8 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
   };
 
   const handleEditSave = () => {
-    const width = parseInt(widthRef.current.value, 10);
-    const height = parseInt(heightRef.current.value, 10);
     const autoplay = autoplayRef.current.checked;
     const url = urlRef.current.value.trim();
-
-    if (width < 0 || width > 100 || height < 0 || height > 100) {
-        showError("Width and Height values must be between 0 and 100.");
-        return;
-    }
 
     if (!url) {
       showError('Please provide a YouTube video URL.');
@@ -88,7 +79,6 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
       url,
       videoId,
       autoplay,
-      size: { width, height }
     };
 
     onSave(newVideo);

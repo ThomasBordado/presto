@@ -35,8 +35,8 @@ const TextBox = ({
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
-  const [currentSize, setCurrentSize] = useState(null);
-  const [currentPosition, setCurrentPosition] = useState(null);
+  const [currentSize, setCurrentSize] = useState(size);
+  const [currentPosition, setCurrentPosition] = useState(position);
   const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
 
   const handleClickInside = (e) => {
@@ -64,7 +64,7 @@ const TextBox = ({
         const parentHeight = slideContainerRef.current.offsetHeight;
         setMinSize({
           minWidth: parentWidth * 0.01,
-          minHeight: parentHeight * 0.01,
+          minHeight: parentHeight * 0.01
         });
       };
 
@@ -75,62 +75,25 @@ const TextBox = ({
     }
   }, [slideContainerRef]);
 
-  useEffect(() => {
-    if (slideContainerRef.current && size && position) {
-      const parentWidth = slideContainerRef.current.offsetWidth;
-      const parentHeight = slideContainerRef.current.offsetHeight;
-
-      const initialSizeInPixels = fromPercentageSize(size.width, size.height, parentWidth, parentHeight);
-      const initialPositionInPixels = fromPercentagePosition(position.x, position.y, parentWidth, parentHeight);
-
-      setCurrentSize(initialSizeInPixels);
-      setCurrentPosition(initialPositionInPixels);
-    }
-  }, [slideContainerRef, size, position]);
-
-  const toPercentageSize = (width, height, parentWidth, parentHeight) => ({
-    width: (width / parentWidth) * 100,
-    height: (height / parentHeight) * 100,
-  });
-
-  const fromPercentageSize = (width, height, parentWidth, parentHeight) => ({
-    width: (width / 100) * parentWidth,
-    height: (height / 100) * parentHeight,
-  });
-
-  const toPercentagePosition = (x, y, parentWidth, parentHeight) => ({
-    x: (x / parentWidth) * 100,
-    y: (y / parentHeight) * 100,
-  });
-
-  const fromPercentagePosition = (x, y, parentWidth, parentHeight) => ({
-    x: (x / 100) * parentWidth,
-    y: (y / 100) * parentHeight,
-  });
-
-  if (!currentSize || !currentPosition) {
-    // Wait until currentSize and currentPosition are initialized
-    return null;
-  }
-
   return (
     <Rnd
       size={{ width: currentSize.width, height: currentSize.height }}
       position={{ x: currentPosition.x, y: currentPosition.y }}
       onDragStop={(e, d) => {
-        const parent = slideContainerRef.current;
-        const newPosition = toPercentagePosition(d.x, d.y, parent.offsetWidth, parent.offsetHeight);
-        setCurrentPosition({ x: d.x, y: d.y });
-        const newSize = toPercentageSize(currentSize.width, currentSize.height, parent.offsetWidth, parent.offsetHeight);
-        onChange({ size: newSize, position: newPosition });
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
+        
+        setCurrentPosition({ x: constrainedX, y: constrainedY });
+        onChange({ size: currentSize, position: { x: constrainedX, y: constrainedY } });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
-        const parent = slideContainerRef.current;
-        const newSize = toPercentageSize(ref.offsetWidth, ref.offsetHeight, parent.offsetWidth, parent.offsetHeight);
-        const newPosition = toPercentagePosition(position.x, position.y, parent.offsetWidth, parent.offsetHeight);
-        setCurrentSize({ width: ref.offsetWidth, height: ref.offsetHeight });
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
+
+        setCurrentSize({ width: constrainedWidth, height: constrainedHeight });
         setCurrentPosition(position);
-        onChange({ size: newSize, position: newPosition });
+
+        onChange({ size: { width: constrainedWidth, height: constrainedHeight }, position });
       }}
       bounds="parent"
       disableDragging={!isSelected}
@@ -151,12 +114,6 @@ const TextBox = ({
         topRight: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', right: '-4px' },
         bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', left: '0px' },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', right: '-4px' },
-      } : {}}
-      resizeHandleClasses={isSelected ? {
-        topLeft: 'nw-resize',
-        topRight: 'ne-resize',
-        bottomLeft: 'sw-resize',
-        bottomRight: 'se-resize',
       } : {}}
       style={{ zIndex }}
     >
