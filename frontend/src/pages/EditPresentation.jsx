@@ -858,6 +858,7 @@ const EditPresentation = () => {
                 size={box.size}
                 fontSize={box.fontSize}
                 color={box.color}
+                fontFamily={box.fontFamily}
                 position={box.position || { x: 0, y: 0 }}
                 zIndex={box.zIndex}
                 text={box.text}
