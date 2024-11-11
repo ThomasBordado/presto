@@ -1,33 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Draggable from 'react-draggable';
+import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 
-const ImageWrapper = styled.div`
-  position: absolute;
-  width: ${(props) => props.$size.width}%;
-  height: ${(props) => props.$size.height}%;
-  z-index: ${(props) => props.$zIndex};
+const ImageContainer = styled.img`
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   &:hover {
     border-color: #888;
   }
 `;
 
-const ImageContainer = styled.img`
-  width: 100%;
-  height: 100%;
-`;
-
-const ResizeHandle = styled.div`
-  width: 5px;
-  height: 5px;
-  background-color: black;
-  position: absolute;
-`;
-
-const StyledImage = ({ position, src, alt, size, zIndex, onPositionChange, onDelete, onEdit }) => {
+const StyledImage = ({ 
+  position, 
+  src, 
+  alt, 
+  size, 
+  zIndex, 
+  onChange, 
+  onDelete, 
+  onEdit,
+  slideContainerRef
+}) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
+  const [currentSize, setCurrentSize] = useState(size);
+  const [currentPosition, setCurrentPosition] = useState(position);
+  const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
 
   const handleClickInside = (e) => {
     e.stopPropagation();
@@ -47,39 +46,80 @@ const StyledImage = ({ position, src, alt, size, zIndex, onPositionChange, onDel
     };
   }, []);
 
-  const handleStop = (e, data) => {
-    onPositionChange({ x: data.x, y: data.y });
-  };
+  useEffect(() => {
+    if (slideContainerRef?.current) {
+      const updateMinSize = () => {
+        const parentWidth = slideContainerRef.current.offsetWidth;
+        const parentHeight = slideContainerRef.current.offsetHeight;
+        setMinSize({
+          minWidth: parentWidth * 0.01,
+          minHeight: parentHeight * 0.01
+        });
+      };
+
+      updateMinSize();
+
+      window.addEventListener('resize', updateMinSize);
+      return () => window.removeEventListener('resize', updateMinSize);
+    }
+  }, [slideContainerRef]);
 
   return (
-    <Draggable
-      defaultPosition={{ x: position.x, y: position.y }}
-      onStop={handleStop}
+    <Rnd
+      size={{ width: currentSize.width, height: currentSize.height }}
+      position={{ x: currentPosition.x, y: currentPosition.y }}
+      onDragStop={(e, d) => {
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height));
+        
+        setCurrentPosition({ x: constrainedX, y: constrainedY });
+        onChange({ size: currentSize, position: { x: constrainedX, y: constrainedY } });
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y);
+
+        setCurrentSize({ width: constrainedWidth, height: constrainedHeight });
+        setCurrentPosition(position);
+
+        onChange({ size: { width: constrainedWidth, height: constrainedHeight }, position });
+      }}
       bounds="parent"
-      disabled={!isSelected}
+      disableDragging={!isSelected}
+      enableResizing={isSelected ? {
+        topLeft: true,
+        topRight: true,
+        bottomLeft: true,
+        bottomRight: true,
+        top: false,
+        right: false,
+        bottom: false,
+        left: false
+      } : false}
+      minWidth={minSize.minWidth}
+      minHeight={minSize.minHeight}
+      resizeHandleStyles={isSelected ? {
+        topLeft: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', left: '0px' },
+        topRight: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', right: '0px' },
+        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px' },
+        bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px' },
+      } : {}}
+      style={{ zIndex }}
     >
-      <ImageWrapper
+      <ImageContainer
         ref={containerRef}
-        $size={size}
-        $zIndex={zIndex}
+        src={src} 
+        alt={alt}
         onClick={handleClickInside}
         onContextMenu={(e) => {
           e.preventDefault();
           onDelete();
         }}
         onDoubleClick={() => onEdit()}
+        draggable={false}
       >
-        <ImageContainer src={src} alt={alt} draggable={false} />
-        {isSelected && (
-          <>
-            <ResizeHandle style={{ top: 0, left: 0, cursor: 'nw-resize' }} />
-            <ResizeHandle style={{ top: 0, right: 0, cursor: 'ne-resize' }} />
-            <ResizeHandle style={{ bottom: 0, left: 0, cursor: 'sw-resize' }} />
-            <ResizeHandle style={{ bottom: 0, right: 0, cursor: 'se-resize' }} />
-          </>
-        )}
-      </ImageWrapper>
-    </Draggable>
+      </ImageContainer>
+    </Rnd>
   );
 };
 
