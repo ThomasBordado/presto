@@ -791,6 +791,10 @@ const EditPresentation = () => {
     }));
   };
 
+  const handlePreviewClick = () => {
+    window.open(`/preview/${presentation.id }`, '_blank');
+  };
+
   return (
     <Container>
       <ErrorDisplay />
@@ -855,6 +859,7 @@ const EditPresentation = () => {
           />
           <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} onAddVideo={openAddVideoModal} />
           <button onClick={() => setPickerOpen(true)}>Background Settings</button>
+          <button onClick={handlePreviewClick}>Preview</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}

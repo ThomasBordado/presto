@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import EditPresentation from './pages/EditPresentation';
+import Preview from './pages/Preview';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/presentation/:id" element={<EditPresentation />} />
+        <Route path="/preview/:id" element={<Preview />} />
       </Routes>
     </BrowserRouter>
   );
