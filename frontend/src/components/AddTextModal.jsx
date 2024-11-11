@@ -17,6 +17,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
   const colorRef = useRef();
   const widthRef = useRef();
   const heightRef = useRef();
+  const fontFamilyRef = useRef();
 
   const handleSave = () => {
     const width = parseInt(widthRef.current.value, 10);
@@ -32,6 +33,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
       color: colorRef.current.value,
+      fontFamily: fontFamilyRef.current.value,
       size: {
         width: parseInt(widthRef.current.value, 10),
         height: parseInt(heightRef.current.value, 10),
@@ -73,6 +75,15 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
       <FormField>
         <label>Height (%):</label>
         <input type="number" ref={heightRef} />
+      </FormField>
+
+      <FormField>
+        <label>Font Family:</label>
+        <select ref={fontFamilyRef}>
+          <option value="Arial">Arial</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select>
       </FormField>
 
       <button onClick={handleSave}>Add Text</button>

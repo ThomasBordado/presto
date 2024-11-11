@@ -16,6 +16,7 @@ const TextBoxContainer = styled.div`
   line-height: 1.2;
   background-color: white;
   cursor: pointer;
+  font-family: ${({ $fontFamily }) => $fontFamily};
 
   &:hover {
     border-color: #888;
@@ -29,7 +30,7 @@ const ResizeHandle = styled.div`
   position: absolute;
 `;
 
-const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChange, onDelete, onEdit }) => {
+const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChange, onDelete, onEdit, fontFamily }) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
 
@@ -68,6 +69,7 @@ const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChan
         $fontSize={fontSize}
         $color={color}
         $zIndex={zIndex}
+        $fontFamily={fontFamily}
         onClick={handleClickInside}
         onContextMenu={(e) => {
           e.preventDefault();

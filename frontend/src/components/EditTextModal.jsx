@@ -17,6 +17,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
   const colorRef = useRef();
   const widthRef = useRef();
   const heightRef = useRef();
+  const fontFamilyRef = useRef();
 
   useEffect(() => {
     if (textBox) {
@@ -25,6 +26,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       colorRef.current.value = textBox.color;
       widthRef.current.value = textBox.size.width;
       heightRef.current.value = textBox.size.height;
+      fontFamilyRef.current.value = textBox.fontFamily ?? 'Arial';
     }
   }, [textBox]);
 
@@ -41,6 +43,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
       color: colorRef.current.value,
+      fontFamily: fontFamilyRef.current.value,
       size: {
         width: parseInt(widthRef.current.value, 10),
         height: parseInt(heightRef.current.value, 10),
@@ -81,6 +84,15 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       <FormField>
         <label>Height (%):</label>
         <input type="number" ref={heightRef} />
+      </FormField>
+
+      <FormField>
+        <label>Font Family:</label>
+        <select ref={fontFamilyRef}>
+          <option value="Arial">Arial</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select>
       </FormField>
 
       <button onClick={handleSave}>Save Changes</button>
