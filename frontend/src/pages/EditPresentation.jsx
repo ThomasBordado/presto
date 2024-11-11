@@ -20,6 +20,7 @@ import Logout from '../components/Logout';
 import StyledImage from '../components/StyledImage';
 import AddVideoModal from '../components/AddVideoModal';
 import StyledVideo from '../components/StyledVideo'
+import BackgroundPickerModal from '../components/BackgroundModalPicker';
 
 const Container = styled.div`
   background-color: #ebebeb;
@@ -214,6 +215,9 @@ const EditPresentation = () => {
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
   const [isAnyModalOpen, setModalOpen] = useState(false);
   const { showError, ErrorDisplay } = useErrorMessage();
+  const [isPickerOpen, setPickerOpen] = useState(false);
+  const [defaultBackground, setDefaultBackground] = useState({ type: 'solid', value: '#ffffff' });
+  const [currentSlideBackground, setCurrentSlideBackground] = useState({});
 
   useEffect(() => {
     const fetchPresentation = async () => {
@@ -301,6 +305,34 @@ const EditPresentation = () => {
   const closeTitleEditModal = () => {
     setIsTitleEditModalOpen(false);
     setModalOpen(false);
+  };
+
+  const handleSaveBackground = (background) => {
+    setCurrentSlideBackground((prevState) => ({
+      ...prevState,
+      [currentSlideIndex]: background,
+    }));
+  };
+
+  const handleSaveDefaultBackground = (background) => {
+    setDefaultBackground(background);
+  };
+
+  const applyBackgroundStyle = (background) => {
+    if (background.type === 'solid') {
+      return { backgroundColor: background.color };
+    } else if (background.type === 'gradient') {
+      return {
+        backgroundImage: `linear-gradient(${background.gradient.direction}, ${background.gradient.start}, ${background.gradient.end})`,
+      };
+    } else if (background.type === 'image') {
+      return {
+        backgroundImage: `url(${background.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      };
+    }
+    return {};
   };
 
   const handleTitleSave = async () => {
@@ -474,9 +506,9 @@ const EditPresentation = () => {
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
     const videos = updatedSlides[currentSlideIndex].videos || [];
-  
+
     let updatedTextBoxes;
-  
+
     if (editingTextBoxIndex) {
       updatedTextBoxes = textBoxes.map((box) => (box.id === editingTextBoxIndex ? textBox : box));
     } else {
@@ -486,23 +518,23 @@ const EditPresentation = () => {
         ...videos.map((vid) => vid.zIndex || 0),
         0
       );
-      
+
       const newTextBox = { ...textBox, zIndex: highestZIndex + 1 };
       updatedTextBoxes = [...textBoxes, newTextBox];
     }
-  
+
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
     };
-  
+
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
     }));
-  
+
     closeEditTextModal();
   };
 
@@ -510,14 +542,14 @@ const EditPresentation = () => {
     const updatedSlides = [...presentation.slides];
 
     const updatedTextBoxes = updatedSlides[currentSlideIndex].textBoxes.filter((box) => box.id !== id);
-  
+
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
     };
-  
+
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
@@ -550,7 +582,7 @@ const EditPresentation = () => {
     let updatedImages = null;
     if (editingImageIndex) {
       updatedImages = images.map((img) =>
-      (img.id === editingImageIndex)
+        (img.id === editingImageIndex)
           ? { ...imageData, zIndex: img.zIndex ?? imageData.zIndex }
           : img
       );
@@ -624,7 +656,7 @@ const EditPresentation = () => {
     let updatedVideos = null;
     if (editingVideoIndex) {
       updatedVideos = videos.map((vid) =>
-      (vid.id === editingVideoIndex)
+        (vid.id === editingVideoIndex)
           ? { ...videoData, zIndex: vid.zIndex ?? videoData.zIndex }
           : vid
       );
@@ -659,39 +691,39 @@ const EditPresentation = () => {
   const updateTextBox = async (id, updatedProps) => {
     const updatedSlides = [...presentation.slides];
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes;
-  
+
     const updatedTextBoxes = textBoxes.map((box) =>
       box.id === id ? { ...box, ...updatedProps } : box
     );
-  
+
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       textBoxes: updatedTextBoxes,
     };
-  
+
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
     }));
   };
-  
+
   const updateImage = async (id, updatedProps) => {
     const updatedSlides = [...presentation.slides];
     const images = updatedSlides[currentSlideIndex].images;
-  
+
     const updatedImages = images.map((img) =>
       img.id === id ? { ...img, ...updatedProps } : img
     );
-  
+
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       images: updatedImages,
     };
-  
+
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
@@ -701,18 +733,18 @@ const EditPresentation = () => {
   const updateVideo = async (id, updatedProps) => {
     const updatedSlides = [...presentation.slides];
     const videos = updatedSlides[currentSlideIndex].videos;
-  
+
     const updatedVideos = videos.map((vid) =>
       vid.id === id ? { ...vid, ...updatedProps } : vid
     );
-  
+
     updatedSlides[currentSlideIndex] = {
       ...updatedSlides[currentSlideIndex],
       videos: updatedVideos,
     };
-  
+
     await saveSlides(updatedSlides);
-  
+
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
@@ -782,6 +814,7 @@ const EditPresentation = () => {
             handleDeleteSlide={handleDeleteSlide}
           />
           <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} onAddVideo={openAddVideoModal} />
+          <button onClick={() => setPickerOpen(true)}>Background Settings</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -817,7 +850,14 @@ const EditPresentation = () => {
                 ? presentation.slides[currentSlideIndex].videos.find((vid) => vid.id === editingVideoIndex)
                 : null}
           />
-          <SlideContainer>
+          <BackgroundPickerModal
+            isOpen={isPickerOpen}
+            onClose={() => setPickerOpen(false)}
+            onSave={(background) => handleSaveBackground(background)}
+            currentBackground={currentSlideBackground[currentSlideIndex] || null}
+          />
+
+          <SlideContainer style={applyBackgroundStyle(currentSlideBackground[currentSlideIndex] || defaultBackground)}>
             {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
               <StyledVideo
                 key={video.id}
