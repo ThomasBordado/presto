@@ -164,11 +164,23 @@ function Dashboard() {
       return;
     }
 
+    const background = {
+      type: 'solid',
+      color:'#ffffff',
+      gradient: {
+        start: '#ffffff',
+        end: '#000000',
+        direction: 'to right',
+      },
+      image: '',
+    };
+
     const newPresentation = {
       id: Date.now(),
       name: presentationName,
       description: presentationDescription,
       thumbnail: null,
+      default_background: background,
       slides: [{}]
     };
 
