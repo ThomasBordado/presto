@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Draggable from 'react-draggable';
+import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 
 const TextBoxContainer = styled.div`
-  position: absolute;
-  width: ${({ $size }) => $size.width}%;
-  height: ${({ $size }) => $size.height}%;
+  width: 100%;
+  height: 100%;
   font-size: ${({ $fontSize }) => $fontSize}em;
   color: ${({ $color }) => $color};
-  z-index: ${({ $zIndex }) => $zIndex};
   border: 2px solid #ccc;
-  padding: 5px;
   overflow: hidden;
   text-align: left;
   line-height: 1.2;
@@ -23,16 +20,24 @@ const TextBoxContainer = styled.div`
   }
 `;
 
-const ResizeHandle = styled.div`
-  width: 5px;
-  height: 5px;
-  background-color: black;
-  position: absolute;
-`;
-
-const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChange, onDelete, onEdit, fontFamily }) => {
+const TextBox = ({ 
+  position, 
+  size, 
+  fontSize, 
+  color, 
+  zIndex, 
+  text, 
+  onChange, 
+  onDelete, 
+  onEdit, 
+  fontFamily,
+  slideContainerRef  
+}) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
+  const [currentSize, setCurrentSize] = useState(null);
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
 
   const handleClickInside = (e) => {
     e.stopPropagation();
@@ -52,23 +57,113 @@ const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChan
     };
   }, []);
 
-  const handleStop = (e, data) => {
-    onPositionChange({ x: data.x, y: data.y });
-  };
+  useEffect(() => {
+    if (slideContainerRef.current) {
+      const updateMinSize = () => {
+        const parentWidth = slideContainerRef.current.offsetWidth;
+        const parentHeight = slideContainerRef.current.offsetHeight;
+        setMinSize({
+          minWidth: parentWidth * 0.01,
+          minHeight: parentHeight * 0.01,
+        });
+      };
+
+      updateMinSize();
+
+      window.addEventListener('resize', updateMinSize);
+      return () => window.removeEventListener('resize', updateMinSize);
+    }
+  }, [slideContainerRef]);
+
+  useEffect(() => {
+    if (slideContainerRef.current && size && position) {
+      const parentWidth = slideContainerRef.current.offsetWidth;
+      const parentHeight = slideContainerRef.current.offsetHeight;
+
+      const initialSizeInPixels = fromPercentageSize(size.width, size.height, parentWidth, parentHeight);
+      const initialPositionInPixels = fromPercentagePosition(position.x, position.y, parentWidth, parentHeight);
+
+      setCurrentSize(initialSizeInPixels);
+      setCurrentPosition(initialPositionInPixels);
+    }
+  }, [slideContainerRef, size, position]);
+
+  const toPercentageSize = (width, height, parentWidth, parentHeight) => ({
+    width: (width / parentWidth) * 100,
+    height: (height / parentHeight) * 100,
+  });
+
+  const fromPercentageSize = (width, height, parentWidth, parentHeight) => ({
+    width: (width / 100) * parentWidth,
+    height: (height / 100) * parentHeight,
+  });
+
+  const toPercentagePosition = (x, y, parentWidth, parentHeight) => ({
+    x: (x / parentWidth) * 100,
+    y: (y / parentHeight) * 100,
+  });
+
+  const fromPercentagePosition = (x, y, parentWidth, parentHeight) => ({
+    x: (x / 100) * parentWidth,
+    y: (y / 100) * parentHeight,
+  });
+
+  if (!currentSize || !currentPosition) {
+    // Wait until currentSize and currentPosition are initialized
+    return null;
+  }
 
   return (
-    <Draggable
-      defaultPosition={{ x: position.x, y: position.y }}
-      onStop={handleStop}
+    <Rnd
+      size={{ width: currentSize.width, height: currentSize.height }}
+      position={{ x: currentPosition.x, y: currentPosition.y }}
+      onDragStop={(e, d) => {
+        const parent = slideContainerRef.current;
+        const newPosition = toPercentagePosition(d.x, d.y, parent.offsetWidth, parent.offsetHeight);
+        setCurrentPosition({ x: d.x, y: d.y });
+        const newSize = toPercentageSize(currentSize.width, currentSize.height, parent.offsetWidth, parent.offsetHeight);
+        onChange({ size: newSize, position: newPosition });
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        const parent = slideContainerRef.current;
+        const newSize = toPercentageSize(ref.offsetWidth, ref.offsetHeight, parent.offsetWidth, parent.offsetHeight);
+        const newPosition = toPercentagePosition(position.x, position.y, parent.offsetWidth, parent.offsetHeight);
+        setCurrentSize({ width: ref.offsetWidth, height: ref.offsetHeight });
+        setCurrentPosition(position);
+        onChange({ size: newSize, position: newPosition });
+      }}
       bounds="parent"
-      disabled={!isSelected}
+      disableDragging={!isSelected}
+      enableResizing={isSelected ? {
+        topLeft: true,
+        topRight: true,
+        bottomLeft: true,
+        bottomRight: true,
+        top: false,
+        right: false,
+        bottom: false,
+        left: false
+      } : false}
+      minWidth={minSize.minWidth}
+      minHeight={minSize.minHeight}
+      resizeHandleStyles={isSelected ? {
+        topLeft: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', left: '0px' },
+        topRight: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', right: '-4px' },
+        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', left: '0px' },
+        bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', right: '-4px' },
+      } : {}}
+      resizeHandleClasses={isSelected ? {
+        topLeft: 'nw-resize',
+        topRight: 'ne-resize',
+        bottomLeft: 'sw-resize',
+        bottomRight: 'se-resize',
+      } : {}}
+      style={{ zIndex }}
     >
       <TextBoxContainer
         ref={containerRef}
-        $size={size}
         $fontSize={fontSize}
         $color={color}
-        $zIndex={zIndex}
         $fontFamily={fontFamily}
         onClick={handleClickInside}
         onContextMenu={(e) => {
@@ -78,16 +173,8 @@ const TextBox = ({ position, size, fontSize, color, zIndex, text, onPositionChan
         onDoubleClick={() => onEdit()}
       >
         {text}
-        {isSelected && (
-          <>
-            <ResizeHandle style={{ top: 0, left: 0, cursor: 'nw-resize' }} />
-            <ResizeHandle style={{ top: 0, right: 0, cursor: 'ne-resize' }} />
-            <ResizeHandle style={{ bottom: 0, left: 0, cursor: 'sw-resize' }} />
-            <ResizeHandle style={{ bottom: 0, right: 0, cursor: 'se-resize' }} />
-          </>
-        )}
       </TextBoxContainer>
-    </Draggable>
+    </Rnd>
   );
 };
 
