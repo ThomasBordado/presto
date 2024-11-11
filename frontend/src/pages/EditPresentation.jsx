@@ -216,8 +216,6 @@ const EditPresentation = () => {
   const [isAnyModalOpen, setModalOpen] = useState(false);
   const { showError, ErrorDisplay } = useErrorMessage();
   const [isPickerOpen, setPickerOpen] = useState(false);
-  const [defaultBackground, setDefaultBackground] = useState({ type: 'solid', value: '#ffffff' });
-  const [currentSlideBackground, setCurrentSlideBackground] = useState({});
 
   useEffect(() => {
     const fetchPresentation = async () => {
@@ -307,18 +305,59 @@ const EditPresentation = () => {
     setModalOpen(false);
   };
 
-  const handleSaveBackground = (background) => {
-    setCurrentSlideBackground((prevState) => ({
-      ...prevState,
-      [currentSlideIndex]: background,
+  const handleSaveBackground = async (updatedBackground) => {
+    const updatedSlides = [...presentation.slides];
+
+    updatedSlides[currentSlideIndex] = {
+      ...updatedSlides[currentSlideIndex],
+      background: updatedBackground,
+    };
+
+    await saveSlides(updatedSlides);
+
+    setPresentation((prev) => ({
+      ...prev,
+      slides: updatedSlides,
     }));
+
+    setPickerOpen(false);
   };
 
-  const handleSaveDefaultBackground = (background) => {
-    setDefaultBackground(background);
+  const handleSaveDefault = async (background) => {
+    const token = getToken();
+    if (!token) {
+      console.error('No authentication token found');
+      return;
+    }
+
+    try {
+      const updatedPresentation = { ...presentation, default_background: background };
+
+      const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const store = response.data.store;
+      const presentations = store.presentations || [];
+
+      const updatedPresentations = presentations.map((pres) =>
+        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+      );
+
+      await axios.put(
+        `http://localhost:${config.BACKEND_PORT}/store`,
+        { store: { presentations: updatedPresentations } },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setPresentation(updatedPresentation);
+      setPickerOpen(false);
+    } catch (error) {
+      console.error('Error updating default background: ', error);
+    }
   };
 
   const applyBackgroundStyle = (background) => {
+    if (!background) return {};
     if (background.type === 'solid') {
       return { backgroundColor: background.color };
     } else if (background.type === 'gradient') {
@@ -853,11 +892,12 @@ const EditPresentation = () => {
           <BackgroundPickerModal
             isOpen={isPickerOpen}
             onClose={() => setPickerOpen(false)}
-            onSave={(background) => handleSaveBackground(background)}
-            currentBackground={currentSlideBackground[currentSlideIndex] || null}
+            onSaveBackground={(background) => handleSaveBackground(background)}
+            onSaveDefault={(background) => handleSaveDefault(background)}
+            currentBackground={presentation.slides[currentSlideIndex].background || null}
           />
 
-          <SlideContainer style={applyBackgroundStyle(currentSlideBackground[currentSlideIndex] || defaultBackground)}>
+          <SlideContainer style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
             {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
               <StyledVideo
                 key={video.id}

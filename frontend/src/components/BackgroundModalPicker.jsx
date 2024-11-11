@@ -74,13 +74,14 @@ const SaveButton = styled.button`
   }
 `;
 
-const BackgroundPickerModal = ({ isOpen, onClose, onSave, currentBackground }) => {
+const BackgroundPickerModal = ({ isOpen, onClose, onSaveBackground, currentBackground, onSaveDefault }) => {
   const [backgroundType, setBackgroundType] = useState(currentBackground?.type || 'solid');
   const [color, setColor] = useState(currentBackground?.color || '#ffffff');
   const [gradientStart, setGradientStart] = useState(currentBackground?.gradient?.start || '#ffffff');
   const [gradientEnd, setGradientEnd] = useState(currentBackground?.gradient?.end || '#000000');
   const [gradientDirection, setGradientDirection] = useState(currentBackground?.gradient?.direction || 'to right');
   const [imageUrl, setImageUrl] = useState(currentBackground?.image || '');
+  const [isDefault, setDefault] = useState(false);
 
   const handleSave = () => {
     const background = {
@@ -93,7 +94,12 @@ const BackgroundPickerModal = ({ isOpen, onClose, onSave, currentBackground }) =
       },
       image: imageUrl,
     };
-    onSave(background);
+
+    if (isDefault) {
+      onSaveDefault(background);
+    } else {
+      onSaveBackground(background);
+    }
     onClose();
   };
 
@@ -121,11 +127,11 @@ const BackgroundPickerModal = ({ isOpen, onClose, onSave, currentBackground }) =
       {backgroundType === 'gradient' && (
         <>
           <FormField>
-            <FormLabel>Gradient Start Color (Left):</FormLabel>
+            <FormLabel>Gradient Start Color (Left/Top):</FormLabel>
             <input type="color" value={gradientStart} onChange={(e) => setGradientStart(e.target.value)} />
           </FormField>
           <FormField>
-            <FormLabel>Gradient End Color (Right):</FormLabel>
+            <FormLabel>Gradient End Color (Right/Bottom):</FormLabel>
             <input type="color" value={gradientEnd} onChange={(e) => setGradientEnd(e.target.value)} />
           </FormField>
           <FormField>
@@ -144,6 +150,13 @@ const BackgroundPickerModal = ({ isOpen, onClose, onSave, currentBackground }) =
           <InputField type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
         </FormField>
       )}
+
+      <FormField>
+        <label>
+          <input type="checkbox" checked={isDefault} onChange={(e) => setDefault(e.target.checked)} />
+          Set Default Background
+        </label>
+      </FormField>
 
       <SaveButton onClick={handleSave}>Save Background</SaveButton>
     </ModalMedium>
