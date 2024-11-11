@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaEdit } from 'react-icons/fa';
 import ModalSmall from '../components/ModalSmall';
@@ -214,6 +214,7 @@ const EditPresentation = () => {
   const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
   const [isAnyModalOpen, setModalOpen] = useState(false);
+  const slideContainerRef = useRef(null);
   const { showError, ErrorDisplay } = useErrorMessage();
   const [isPickerOpen, setPickerOpen] = useState(false);
 
@@ -691,7 +692,7 @@ const EditPresentation = () => {
     const textBoxes = updatedSlides[currentSlideIndex].textBoxes || [];
     const images = updatedSlides[currentSlideIndex].images || [];
     const videos = updatedSlides[currentSlideIndex].videos || [];
-    console.log(videoData);
+
     let updatedVideos = null;
     if (editingVideoIndex) {
       updatedVideos = videos.map((vid) =>
@@ -897,7 +898,7 @@ const EditPresentation = () => {
             currentBackground={presentation.slides[currentSlideIndex].background || null}
           />
 
-          <SlideContainer style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
+          <SlideContainer ref={slideContainerRef} style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
             {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
               <StyledVideo
                 key={video.id}
@@ -944,7 +945,8 @@ const EditPresentation = () => {
                 text={box.text}
                 onDelete={() => handleDeleteTextBox(box.id)}
                 onEdit={() => openEditTextModal(box.id)}
-                onPositionChange={(newPosition) => updateTextBox(box.id, { position: newPosition })}
+                onChange={(newProps) => updateTextBox(box.id, { position: newProps.position, size: newProps.size })}
+                slideContainerRef={slideContainerRef} 
               />
             ))}
             <SlideNumber currentSlideIndex={currentSlideIndex} />

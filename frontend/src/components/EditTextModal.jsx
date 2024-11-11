@@ -15,8 +15,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
   const textRef = useRef();
   const fontSizeRef = useRef();
   const colorRef = useRef();
-  const widthRef = useRef();
-  const heightRef = useRef();
   const fontFamilyRef = useRef();
 
   useEffect(() => {
@@ -24,30 +22,17 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       textRef.current.value = textBox.text;
       fontSizeRef.current.value = textBox.fontSize;
       colorRef.current.value = textBox.color;
-      widthRef.current.value = textBox.size.width;
-      heightRef.current.value = textBox.size.height;
       fontFamilyRef.current.value = textBox.fontFamily ?? 'Arial';
     }
   }, [textBox]);
 
   const handleSave = () => {
-    const width = parseInt(widthRef.current.value, 10);
-    const height = parseInt(heightRef.current.value, 10);
-    if (width < 0 || width > 100 || height < 0 || height > 100) {
-      showError('Width or Height is not between 0 and 100.');
-      return;
-    }
-
     const updatedTextBox = {
       ...textBox,
       text: textRef.current.value,
       fontSize: parseFloat(fontSizeRef.current.value),
       color: colorRef.current.value,
       fontFamily: fontFamilyRef.current.value,
-      size: {
-        width: parseInt(widthRef.current.value, 10),
-        height: parseInt(heightRef.current.value, 10),
-      },
     };
 
     onSave(updatedTextBox);
@@ -74,16 +59,6 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       <FormField>
         <label>Text Color (Hex):</label>
         <input type="text" ref={colorRef} />
-      </FormField>
-
-      <FormField>
-        <label>Width (%):</label>
-        <input type="number" ref={widthRef} />
-      </FormField>
-
-      <FormField>
-        <label>Height (%):</label>
-        <input type="number" ref={heightRef} />
       </FormField>
 
       <FormField>
