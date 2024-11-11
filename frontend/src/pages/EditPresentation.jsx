@@ -306,6 +306,16 @@ const EditPresentation = () => {
     setModalOpen(false);
   };
 
+  const openBackgroundModal = () => {
+    setPickerOpen(true);
+    setModalOpen(true);
+  };
+
+  const closeBackgroundModal = () => {
+    setPickerOpen(false);
+    setModalOpen(false);
+  };
+
   const handleSaveBackground = async (updatedBackground) => {
     const updatedSlides = [...presentation.slides];
 
@@ -321,7 +331,7 @@ const EditPresentation = () => {
       slides: updatedSlides,
     }));
 
-    setPickerOpen(false);
+    closeBackgroundModal();
   };
 
   const handleSaveDefault = async (background) => {
@@ -351,7 +361,7 @@ const EditPresentation = () => {
       );
 
       setPresentation(updatedPresentation);
-      setPickerOpen(false);
+      closeBackgroundModal();
     } catch (error) {
       console.error('Error updating default background: ', error);
     }
@@ -854,7 +864,7 @@ const EditPresentation = () => {
             handleDeleteSlide={handleDeleteSlide}
           />
           <ToolPanel onAddText={openAddTextModal} onAddImage={openAddImageModal} onAddVideo={openAddVideoModal} />
-          <button onClick={() => setPickerOpen(true)}>Background Settings</button>
+          <button onClick={openBackgroundModal}>Background Settings</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -892,7 +902,7 @@ const EditPresentation = () => {
           />
           <BackgroundPickerModal
             isOpen={isPickerOpen}
-            onClose={() => setPickerOpen(false)}
+            onClose={closeBackgroundModal}
             onSaveBackground={(background) => handleSaveBackground(background)}
             onSaveDefault={(background) => handleSaveDefault(background)}
             currentBackground={presentation.slides[currentSlideIndex].background || null}
@@ -907,7 +917,8 @@ const EditPresentation = () => {
                 zIndex={video.zIndex}
                 onDelete={() => handleDeleteVideo(video.id)}
                 onEdit={() => openEditVideoModal(video.id)}
-                onPositionChange={(newPosition) => updateVideo(video.id, { position: newPosition })}
+                onChange={(newProps) => updateVideo(video.id, { position: newProps.position, size: newProps.size })}
+                slideContainerRef={slideContainerRef} 
               >
                 <iframe
                   width="100%"
@@ -930,7 +941,8 @@ const EditPresentation = () => {
                 zIndex={img.zIndex}
                 onDelete={() => handleDeleteImage(img.id)}
                 onEdit={() => openEditImageModal(img.id)}
-                onPositionChange={(newPosition) => updateImage(img.id, { position: newPosition })}
+                onChange={(newProps) => updateImage(img.id, { position: newProps.position, size: newProps.size })}
+                slideContainerRef={slideContainerRef} 
               />
             ))}
             {presentation.slides[currentSlideIndex]?.textBoxes?.map((box) => (

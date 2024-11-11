@@ -1,32 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Draggable from 'react-draggable';
+import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 
 const StyledVideoContainer = styled.div`
-  position: absolute;
-  width: ${(props) => props.$size.width}%;
-  height: ${(props) => props.$size.height}%;
+  width: 100%;
+  height: 100%;
   cursor: ${(props) => (props.isSelected ? 'move' : 'pointer')};
-  z-index: ${(props) => props.$zIndex};
   border: ${(props) => (props.isSelected ? '2px solid blue' : '2px solid transparent')};
   &:hover {
     border-color: ${(props) => (props.isSelected ? 'blue' : 'red')};
   }
 `;
 
-const ResizeHandle = styled.div`
-  width: 5px;
-  height: 5px;
-  background-color: white;
-  position: absolute;
-  &:hover {
-    background-color: grey;
-  }
-`;
-
-const StyledVideo = ({ position, size, zIndex, onPositionChange, onDelete, onEdit, children }) => {
+const StyledVideo = ({ 
+    position, 
+    size, 
+    zIndex, 
+    onChange, 
+    onDelete, 
+    onEdit,
+    slideContainerRef,
+    children 
+}) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
+  const [currentSize, setCurrentSize] = useState(size);
+  const [currentPosition, setCurrentPosition] = useState(position);
+  const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
 
   const handleClickInside = (e) => {
     e.stopPropagation();
@@ -46,16 +46,65 @@ const StyledVideo = ({ position, size, zIndex, onPositionChange, onDelete, onEdi
     };
   }, []);
 
-  const handleStop = (e, data) => {
-    onPositionChange({ x: data.x, y: data.y });
-  };
+  useEffect(() => {
+    if (slideContainerRef?.current) {
+      const updateMinSize = () => {
+        const parentWidth = slideContainerRef.current.offsetWidth;
+        const parentHeight = slideContainerRef.current.offsetHeight;
+        setMinSize({
+          minWidth: parentWidth * 0.01,
+          minHeight: parentHeight * 0.01
+        });
+      };
+
+      updateMinSize();
+
+      window.addEventListener('resize', updateMinSize);
+      return () => window.removeEventListener('resize', updateMinSize);
+    }
+  }, [slideContainerRef]);
 
   return (
-    <Draggable
-      defaultPosition={{ x: position.x, y: position.y }}
-      onStop={handleStop}
+    <Rnd
+      size={{ width: currentSize.width, height: currentSize.height }}
+      position={{ x: currentPosition.x, y: currentPosition.y }}
+      onDragStop={(e, d) => {
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
+        
+        setCurrentPosition({ x: constrainedX, y: constrainedY });
+        onChange({ size: currentSize, position: { x: constrainedX, y: constrainedY } });
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
+
+        setCurrentSize({ width: constrainedWidth, height: constrainedHeight });
+        setCurrentPosition(position);
+
+        onChange({ size: { width: constrainedWidth, height: constrainedHeight }, position });
+      }}
       bounds="parent"
-      disabled={!isSelected}
+      disableDragging={!isSelected}
+      enableResizing={isSelected ? {
+        topLeft: true,
+        topRight: true,
+        bottomLeft: true,
+        bottomRight: true,
+        top: false,
+        right: false,
+        bottom: false,
+        left: false
+      } : false}
+      minWidth={minSize.minWidth}
+      minHeight={minSize.minHeight}
+      resizeHandleStyles={isSelected ? {
+        topLeft: { width: '5px', height: '5px', backgroundColor: 'white', top: '4px', left: '4px' },
+        topRight: { width: '5px', height: '5px', backgroundColor: 'white', top: '4px', right: '-4px' },
+        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'white', bottom: '-4px', left: '4px' },
+        bottomRight: { width: '5px', height: '5px', backgroundColor: 'white', bottom: '-4px', right: '-4px' },
+      } : {}}
+      style={{ zIndex }}
     >
       <StyledVideoContainer
         ref={containerRef}
@@ -70,17 +119,8 @@ const StyledVideo = ({ position, size, zIndex, onPositionChange, onDelete, onEdi
         onDoubleClick={() => onEdit()}
       >
         {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' } })}
-        
-        {isSelected && (
-          <>
-            <ResizeHandle style={{ top: 0, left: 0, cursor: 'nw-resize' }} />
-            <ResizeHandle style={{ top: 0, right: 0, cursor: 'ne-resize' }} />
-            <ResizeHandle style={{ bottom: 0, left: 0, cursor: 'sw-resize' }} />
-            <ResizeHandle style={{ bottom: 0, right: 0, cursor: 'se-resize' }} />
-          </>
-        )}
       </StyledVideoContainer>
-    </Draggable>
+    </Rnd>
   );
 };
 
