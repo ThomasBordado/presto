@@ -12,10 +12,10 @@ const FormField = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 200px; // Adjust this height as needed
-  resize: vertical; // Allow vertical resizing
+  height: 200px; 
+  resize: vertical;
   padding: 8px;
-  font-family: monospace; // Use a monospace font for code
+  font-family: monospace;
   font-size: 1em;
 `;
 
@@ -45,8 +45,6 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
     if (code) {
       codeRef.current.value = code.content;
       fontSizeRef.current.value = code.fontSize;
-      widthRef.current.value = code.size.width;
-      heightRef.current.value = code.size.height;
     } 
   }, [code]);
 
@@ -73,15 +71,12 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
   };
   
   const handleEditSave = () => {
-    const width = parseInt(widthRef.current.value, 10);
-    const height = parseInt(heightRef.current.value, 10);
     const content = codeRef.current.value;
 
     const updatedCode = {
       ...code,
       content: content,
       fontSize: parseFloat(fontSizeRef.current.value),
-      size: { width, height }
     };
   
     onSave(updatedCode);
@@ -105,15 +100,19 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
         <input type="number" step="0.1" ref={fontSizeRef} defaultValue={code?.fontSize || 1} />
       </FormField>
 
-      <FormField>
-        <label>Width (px):</label>
-        <input type="number" ref={widthRef} defaultValue={code?.size?.width || 100} />
-      </FormField>
+      {!code && (
+        <>
+        <FormField>
+          <label>Width (%):</label>
+          <input type="number" ref={widthRef} defaultValue={50} />
+        </FormField>
 
-      <FormField>
-        <label>Height (px):</label>
-        <input type="number" ref={heightRef} defaultValue={code?.size?.height || 100} />
-      </FormField>
+        <FormField>
+          <label>Height (%):</label>
+          <input type="number" ref={heightRef} defaultValue={50} />
+        </FormField>
+        </>
+      )}
 
       <button onClick={code ? handleEditSave : handleAddSave}>
         {code ? "Save Changes" : "Add Code"}
