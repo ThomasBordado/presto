@@ -23,7 +23,6 @@ const Preview = () => {
         });
         const store = response.data.store;
         const presentations = store.presentations || [];
-
         const foundPresentation = presentations.find(
           (presentation) => presentation.id === parseInt(id, 10)
         );
@@ -41,7 +40,7 @@ const Preview = () => {
     fetchPresentation();
   }, [id]);
 
-  // Arrow keys t move through slides
+  // Arrow keys to move through slides
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!presentation) return;
@@ -88,10 +87,69 @@ const Preview = () => {
     }
   };
 
+  const renderTextBox = (textBox) => (
+    <div
+      key={textBox.id}
+      style={{
+        position: 'absolute',
+        left: textBox.position.x,
+        top: textBox.position.y,
+        fontSize: textBox.fontSize,
+        fontFamily: textBox.fontFamily,
+        color: textBox.color || '#000',
+        width: textBox.size.width,
+        height: textBox.size.height,
+        zIndex: textBox.zIndex,
+      }}
+    >
+      {textBox.text}
+    </div>
+  );
+
+  const renderImage = (image) => (
+    <img
+      key={image.id}
+      src={image.src}
+      alt={image.description || 'Image'}
+      style={{
+        position: 'absolute',
+        left: image.position.x,
+        top: image.position.y,
+        width: image.size.width,
+        height: image.size.height,
+        zIndex: image.zIndex,
+      }}
+    />
+  );
+
+  const renderVideo = (video) => {
+    const embedUrl = `https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0}`;
+
+    return (
+      <iframe
+        key={video.id}
+        src={embedUrl}
+        title={video.description || 'Video'}
+        allow="autoplay; encrypted-media"
+        style={{
+          position: 'absolute',
+          left: video.position.x,
+          top: video.position.y,
+          width: video.size.width,
+          height: video.size.height,
+          zIndex: video.zIndex,
+        }}
+      />
+    );
+  };
+
   return (
     <div style={{ position: 'relative', height: '100vh', margin: '-8px', ...getBackgroundStyle() }}>
-
-      {/* Slide navigation */}
+      <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {presentation.slides[currentSlide].textBoxes?.map(renderTextBox)}
+        {presentation.slides[currentSlide].images?.map(renderImage)}
+        {presentation.slides[currentSlide].videos?.map(renderVideo)}
+      </div>
       <button
         style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}
         onClick={goToPreviousSlide}
@@ -104,7 +162,6 @@ const Preview = () => {
       >
         →
       </button>
-      {/* Current slide / total slides */}
       <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', color: 'white' }}>
         Slide {currentSlide + 1} / {presentation.slides.length}
       </div>
