@@ -59,22 +59,22 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
 
       <FormField>
         <label>Font Size (em):</label>
-        <input type="number" step="0.1" ref={fontSizeRef} />
+        <input type="number" step="0.1" ref={fontSizeRef} defaultValue={1}/>
       </FormField>
 
       <FormField>
-        <label>Text Color (Hex):</label>
-        <input type="text" ref={colorRef} />
+        <label>Text Color (Hex or Colour):</label>
+        <input type="text" ref={colorRef} defaultValue={'black'}/>
       </FormField>
 
       <FormField>
         <label>Width (%):</label>
-        <input type="number" ref={widthRef} />
+        <input type="number" ref={widthRef} defaultValue={50}/>
       </FormField>
 
       <FormField>
         <label>Height (%):</label>
-        <input type="number" ref={heightRef} />
+        <input type="number" ref={heightRef} defaultValue={50}/>
       </FormField>
 
       <FormField>

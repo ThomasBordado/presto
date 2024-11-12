@@ -24,8 +24,6 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
     if (image) {
       urlRef.current.value = image.src;
       descriptionRef.current.value = image.description;
-      widthRef.current.value = image.size.width;
-      heightRef.current.value = image.size.height;
     } 
   }, [image]);
 
@@ -68,17 +66,11 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
   const handleEditSave = () => {
     const width = parseInt(widthRef.current.value, 10);
     const height = parseInt(heightRef.current.value, 10);
-  
-    if (width < 0 || width > 100 || height < 0 || height > 100) {
-      showError("Width and Height values must be between 0 and 100.");
-      return;
-    }
 
     const updatedImage = {
       ...image,
       src: imageData || urlRef.current.value,
       description: descriptionRef.current.value,
-      size: { width, height }
     };
   
     onSave(updatedImage);
@@ -107,16 +99,19 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
         <label>Image Description (Alt text):</label>
         <input type="text" ref={descriptionRef} defaultValue={image?.description || ''} />
       </FormField>
+      {!image && (
+        <>
+        <FormField>
+          <label>Width (%):</label>
+          <input type="number" ref={widthRef} defaultValue={50} />
+        </FormField>
 
-      <FormField>
-        <label>Width (%):</label>
-        <input type="number" ref={widthRef} defaultValue={image?.size?.width || 50} min="0" max="100" />
-      </FormField>
-
-      <FormField>
-        <label>Height (%):</label>
-        <input type="number" ref={heightRef} defaultValue={image?.size?.height || 50} min="0" max="100" />
-      </FormField>
+        <FormField>
+          <label>Height (%):</label>
+          <input type="number" ref={heightRef} defaultValue={50} />
+        </FormField>
+        </>
+      )}
 
       <button onClick={image ? handleEditSave : handleAddSave}>
         {image ? "Save Changes" : "Add Image"}
