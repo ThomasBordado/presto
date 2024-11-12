@@ -3,6 +3,7 @@ import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import { v4 as uuidv4 } from 'uuid';
+import detectLang from 'lang-detector';
 
 const FormField = styled.div`
   margin-bottom: 5px;
@@ -57,13 +58,21 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
       showError("Width or Height must be between 0 and 100.");
       return;
     }
+
+    let detected = detectLang(content);
+    if (detected === 'C' || detected === 'C++') detected = 'c';
+    else if (detected === 'JavaScript') detected = 'javascript';
+    else if (detected === 'Python') detected = 'python';
+    else if (detected === 'Java') detected = 'Java';
+    else detected = 'plaintext';
   
     const newCode = {
       id: uuidv4(),
       content: content,
       fontSize: parseFloat(fontSizeRef.current.value),
       size: { width, height },
-      position: { x: 0, y: 0 }
+      position: { x: 0, y: 0 },
+      language: detected
     };
   
     onSave(newCode);
@@ -73,10 +82,18 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
   const handleEditSave = () => {
     const content = codeRef.current.value;
 
+    let detected = detectLang(content);
+    if (detected === 'C' || detected === 'C++') detected = 'c';
+    else if (detected === 'JavaScript') detected = 'javascript';
+    else if (detected === 'Python') detected = 'python';
+    else if (detected === 'Java') detected = 'Java';
+    else detected = 'plaintext';
+
     const updatedCode = {
       ...code,
       content: content,
       fontSize: parseFloat(fontSizeRef.current.value),
+      language: detected
     };
   
     onSave(updatedCode);

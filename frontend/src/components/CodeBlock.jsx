@@ -3,7 +3,6 @@ import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import detectLang from 'lang-detector';
 
 const CodeBlockContainer = styled.div`
   width: 100%;
@@ -26,7 +25,8 @@ const CodeBlock = ({
   size, 
   fontSize, 
   zIndex, 
-  code, 
+  code,
+  detectedLang,
   onChange, 
   onDelete, 
   onEdit, 
@@ -37,7 +37,6 @@ const CodeBlock = ({
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
   const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
-  const [detectedLanguage, setDetectedLanguage] = useState('plaintext');
   const [isInitialised, setIsInitialised] = useState(false);
 
   const handleClickInside = (e) => {
@@ -75,14 +74,6 @@ const CodeBlock = ({
       return () => window.removeEventListener('resize', updateMinSize);
     }
   }, [slideContainerRef]);
-
-  useEffect(() => {
-    let detected = detectLang(code);
-    if (detected === 'C' || detected === 'C++') detected = 'c';
-    else if (detected === 'JavaScript') detected = 'javascript';
-    else if (detected === 'Python') detected = 'python';
-    setDetectedLanguage(detected || 'plaintext');
-  }, [code]);
 
   const toPercentage = (value, total) => (value / total) * 100;
   const fromPercentage = (percentage, total) => (percentage / 100) * total;
@@ -194,7 +185,7 @@ const CodeBlock = ({
         onDoubleClick={() => onEdit()}
       >
         <SyntaxHighlighter 
-            language={detectedLanguage} 
+            language={detectedLang} 
             style={docco}
             customStyle={{ padding: 5, margin: 0 }}
             showLineNumbers

@@ -886,6 +886,10 @@ const EditPresentation = () => {
     }));
   };
 
+  const handlePreviewClick = () => {
+    window.open(`/preview/${presentation.id }`, '_blank');
+  };
+
   const updateCode = async (id, updatedProps) => {
     const updatedSlides = [...presentation.slides];
     const codeBlocks = updatedSlides[currentSlideIndex].codeBlocks;
@@ -976,6 +980,7 @@ const EditPresentation = () => {
             onAddCode={openAddCodeModal}
           />
           <button onClick={openBackgroundModal}>Background Settings</button>
+          <button onClick={handlePreviewClick}>Preview</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -1038,6 +1043,7 @@ const EditPresentation = () => {
                 fontSize={code.fontSize}
                 position={code.position || { x: 0, y: 0 }}
                 zIndex={code.zIndex}
+                detectedLang ={code.language}
                 onDelete={() => handleDeleteCode(code.id)}
                 onEdit={() => openEditCodeModal(code.id)}
                 onChange={(newProps) => updateCode(code.id, { position: newProps.position, size: newProps.size })}
