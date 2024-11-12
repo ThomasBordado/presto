@@ -5,11 +5,13 @@ import config from '../../backend.config.json';
 import { getToken } from '../Auth';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Preview = () => {
   const { id } = useParams();
   const [presentation, setPresentation] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(null);
+  const [direction, setDirection] = useState(1); 
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -84,12 +86,16 @@ const Preview = () => {
   }, [presentation, currentSlide]);
 
   const goToPreviousSlide = () => {
-    if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+    if (currentSlide > 0) {
+      setDirection(-1);
+      setCurrentSlide(currentSlide - 1);
+    }
   };
 
   const goToNextSlide = () => {
     if (presentation && currentSlide < presentation.slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
+      setDirection(1);
     }
   };
 
@@ -195,14 +201,42 @@ const Preview = () => {
     </div>
   );
 
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? -300 : 300,
+      opacity: 0,
+    }),
+  };
+
   return (
     <div style={{ position: 'relative', height: '100vh', margin: '-8px', ...getBackgroundStyle() }}>
-      <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        {presentation.slides[currentSlide].textBoxes?.map(renderTextBox)}
-        {presentation.slides[currentSlide].images?.map(renderImage)}
-        {presentation.slides[currentSlide].videos?.map(renderVideo)}
-        {presentation.slides[currentSlide].codeBlocks?.map(renderCode)}
-      </div>
+      <AnimatePresence initial={false} custom={direction}>
+        <motion.div
+          key={currentSlide}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.5 }}
+          style={{ position: 'absolute', width: '100%', height: '100%' }}
+        >
+          <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {presentation.slides[currentSlide].textBoxes?.map(renderTextBox)}
+            {presentation.slides[currentSlide].images?.map(renderImage)}
+            {presentation.slides[currentSlide].videos?.map(renderVideo)}
+            {presentation.slides[currentSlide].codeBlocks?.map(renderCode)}
+          </div>
+        </motion.div>
+      </AnimatePresence>
       <button
         style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', zIndex: '999' }}
         onClick={goToPreviousSlide}
