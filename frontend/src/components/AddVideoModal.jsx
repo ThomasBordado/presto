@@ -103,15 +103,20 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
         <input type="text" ref={urlRef} defaultValue={video?.url || ''} />
       </FormField>
 
-      <FormField>
-        <label>Width (%):</label>
-        <input type="number" ref={widthRef} defaultValue={video?.size?.width || 50} min="1" max="100" />
-      </FormField>
+      {!video && (
+        <>
+          <FormField>
+            <label>Width (%):</label>
+            <input type="number" ref={widthRef} defaultValue={video?.size?.width || 50} min="1" max="100" />
+          </FormField>
 
-      <FormField>
-        <label>Height (%):</label>
-        <input type="number" ref={heightRef} defaultValue={video?.size?.height || 50} min="1" max="100" />
-      </FormField>
+          <FormField>
+            <label>Height (%):</label>
+            <input type="number" ref={heightRef} defaultValue={video?.size?.height || 50} min="1" max="100" />
+          </FormField>
+        </>
+
+      )}
 
       <FormField>
         <label>

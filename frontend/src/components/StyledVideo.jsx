@@ -27,6 +27,7 @@ const StyledVideo = ({
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
   const [minSize, setMinSize] = useState({ minWidth: 10, minHeight: 10 });
+  const [isInitialised, setIsInitialised] = useState(false);
 
   const handleClickInside = (e) => {
     e.stopPropagation();
@@ -64,25 +65,82 @@ const StyledVideo = ({
     }
   }, [slideContainerRef]);
 
+  const toPercentage = (value, total) => (value / total) * 100;
+  const fromPercentage = (percentage, total) => (percentage / 100) * total;
+
+  const convertPositionToPercentage = (x, y) => {
+    const parentWidth = slideContainerRef.current.offsetWidth;
+    const parentHeight = slideContainerRef.current.offsetHeight;
+    return {
+      x: toPercentage(x, parentWidth),
+      y: toPercentage(y, parentHeight),
+    };
+  };
+
+  const convertSizeToPercentage = (width, height) => {
+    const parentWidth = slideContainerRef.current.offsetWidth;
+    const parentHeight = slideContainerRef.current.offsetHeight;
+    return {
+      width: toPercentage(width, parentWidth),
+      height: toPercentage(height, parentHeight),
+    };
+  };
+
+  const convertPositionFromPercentage = (x, y) => {
+    const parentWidth = slideContainerRef.current.offsetWidth;
+    const parentHeight = slideContainerRef.current.offsetHeight;
+    return {
+      x: fromPercentage(x, parentWidth),
+      y: fromPercentage(y, parentHeight),
+    };
+  };
+
+  const convertSizeFromPercentage = (width, height) => {
+    const parentWidth = slideContainerRef.current.offsetWidth;
+    const parentHeight = slideContainerRef.current.offsetHeight;
+    return {
+      width: fromPercentage(width, parentWidth),
+      height: fromPercentage(height, parentHeight),
+    };
+  };
+
+  useEffect(() => {
+    const initialSize = convertSizeFromPercentage(size.width, size.height);
+    const initialPosition = convertPositionFromPercentage(position.x, position.y);
+    setCurrentSize(initialSize);
+    setCurrentPosition(initialPosition);
+    setIsInitialised(true);
+  }, [size, position, slideContainerRef]);
+
+  if (!isInitialised) {
+    return null;
+  }
+
   return (
     <Rnd
-      size={{ width: currentSize.width, height: currentSize.height }}
-      position={{ x: currentPosition.x, y: currentPosition.y }}
+      size={currentSize}
+      position={currentPosition}
       onDragStop={(e, d) => {
         const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
         const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
-        
+
+        const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
+
         setCurrentPosition({ x: constrainedX, y: constrainedY });
-        onChange({ size: currentSize, position: { x: constrainedX, y: constrainedY } });
+        const newSize = convertSizeToPercentage(currentSize.width, currentSize.height);
+        onChange({ size: newSize, position: newPosition });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
         const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
         const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
 
+        const newSize = convertSizeToPercentage(constrainedWidth, constrainedHeight);
+        const newPosition = convertPositionToPercentage(position.x, position.y);
+
         setCurrentSize({ width: constrainedWidth, height: constrainedHeight });
         setCurrentPosition(position);
 
-        onChange({ size: { width: constrainedWidth, height: constrainedHeight }, position });
+        onChange({ size: newSize, position: newPosition });
       }}
       bounds="parent"
       disableDragging={!isSelected}
