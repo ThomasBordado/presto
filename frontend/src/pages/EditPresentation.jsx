@@ -223,6 +223,19 @@ const EditPresentation = () => {
   const [isPickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
+    const handleURLChange = () => {
+      const slideParam = parseInt(new URLSearchParams(window.location.search).get("slide"), 10);
+      if (!isNaN(slideParam) && slideParam !== currentSlideIndex) {
+        setCurrentSlideIndex(slideParam);
+      }
+    };
+
+    handleURLChange();
+    window.addEventListener("popstate", handleURLChange);
+    return () => window.removeEventListener("popstate", handleURLChange);
+  }, [currentSlideIndex]);
+
+  useEffect(() => {
     const fetchPresentation = async () => {
       const token = getToken();
       if (!token) {
@@ -245,6 +258,12 @@ const EditPresentation = () => {
           setPresentation(foundPresentation);
           setNewTitle(foundPresentation.name);
           setThumbnail(foundPresentation.thumbnail || '');
+
+          const urlParams = new URLSearchParams(window.location.search);
+          if (!urlParams.has("slide")) {
+            urlParams.set("slide", 0);
+            navigate(`?${urlParams.toString()}`, { replace: true });
+          }
         } else {
           console.error('Presentation not found');
         }
@@ -254,7 +273,7 @@ const EditPresentation = () => {
     };
 
     fetchPresentation();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleBack = () => {
     navigate('/dashboard');
@@ -520,8 +539,13 @@ const EditPresentation = () => {
     }
   };
 
-  const goToPreviousSlide = () => setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
-  const goToNextSlide = () => setCurrentSlideIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
+  const goToPreviousSlide = () => setSlideIndex(Math.max(currentSlideIndex - 1, 0));
+  const goToNextSlide = () => setSlideIndex(Math.min(currentSlideIndex + 1, presentation.slides.length - 1));
+
+  const setSlideIndex = (index) => {
+    setCurrentSlideIndex(index);
+    navigate(`/presentation/${id}?slide=${index}`);
+  };
 
   // Keyboard navigation of left and right arrow keys on slides
   useEffect(() => {
@@ -887,7 +911,7 @@ const EditPresentation = () => {
   };
 
   const handlePreviewClick = () => {
-    window.open(`/preview/${presentation.id }`, '_blank');
+    window.open(`/preview/${presentation.id}`, '_blank');
   };
 
   const updateCode = async (id, updatedProps) => {
@@ -973,10 +997,10 @@ const EditPresentation = () => {
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
           />
-          <ToolPanel 
-            onAddText={openAddTextModal} 
-            onAddImage={openAddImageModal} 
-            onAddVideo={openAddVideoModal} 
+          <ToolPanel
+            onAddText={openAddTextModal}
+            onAddImage={openAddImageModal}
+            onAddVideo={openAddVideoModal}
             onAddCode={openAddCodeModal}
           />
           <button onClick={openBackgroundModal}>Background Settings</button>
@@ -1043,11 +1067,11 @@ const EditPresentation = () => {
                 fontSize={code.fontSize}
                 position={code.position || { x: 0, y: 0 }}
                 zIndex={code.zIndex}
-                detectedLang ={code.language}
+                detectedLang={code.language}
                 onDelete={() => handleDeleteCode(code.id)}
                 onEdit={() => openEditCodeModal(code.id)}
                 onChange={(newProps) => updateCode(code.id, { position: newProps.position, size: newProps.size })}
-                slideContainerRef={slideContainerRef} 
+                slideContainerRef={slideContainerRef}
               />
             ))}
             {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
@@ -1059,7 +1083,7 @@ const EditPresentation = () => {
                 onDelete={() => handleDeleteVideo(video.id)}
                 onEdit={() => openEditVideoModal(video.id)}
                 onChange={(newProps) => updateVideo(video.id, { position: newProps.position, size: newProps.size })}
-                slideContainerRef={slideContainerRef} 
+                slideContainerRef={slideContainerRef}
               >
                 <iframe
                   width="100%"
@@ -1083,7 +1107,7 @@ const EditPresentation = () => {
                 onDelete={() => handleDeleteImage(img.id)}
                 onEdit={() => openEditImageModal(img.id)}
                 onChange={(newProps) => updateImage(img.id, { position: newProps.position, size: newProps.size })}
-                slideContainerRef={slideContainerRef} 
+                slideContainerRef={slideContainerRef}
               />
             ))}
             {presentation.slides[currentSlideIndex]?.textBoxes?.map((box) => (
@@ -1099,7 +1123,7 @@ const EditPresentation = () => {
                 onDelete={() => handleDeleteTextBox(box.id)}
                 onEdit={() => openEditTextModal(box.id)}
                 onChange={(newProps) => updateTextBox(box.id, { position: newProps.position, size: newProps.size })}
-                slideContainerRef={slideContainerRef} 
+                slideContainerRef={slideContainerRef}
               />
             ))}
             <SlideNumber currentSlideIndex={currentSlideIndex} />

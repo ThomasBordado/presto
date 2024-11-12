@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../backend.config.json';
 import { getToken } from '../Auth';
@@ -9,8 +9,16 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 const Preview = () => {
   const { id } = useParams();
   const [presentation, setPresentation] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const getSlideFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    return parseInt(params.get('slide'), 10) || 0;
+  };
+
+  // Fetch presentation data
   useEffect(() => {
     const fetchPresentation = async () => {
       const token = getToken();
@@ -42,6 +50,22 @@ const Preview = () => {
     fetchPresentation();
   }, [id]);
 
+  // After presentation is loaded, set the initial slide based on URL parameter
+  useEffect(() => {
+    if (presentation && currentSlide === null) {
+      setCurrentSlide(getSlideFromUrl());
+    }
+  }, [presentation, currentSlide]);
+
+  // Update the slide parameter when the slide is changed
+  useEffect(() => {
+    if (currentSlide !== null) {
+      const params = new URLSearchParams(location.search);
+      params.set('slide', currentSlide);
+      navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    }
+  }, [currentSlide, navigate, location.pathname]);
+
   // Arrow keys to move through slides
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -64,10 +88,12 @@ const Preview = () => {
   };
 
   const goToNextSlide = () => {
-    if (currentSlide < presentation.slides.length - 1) setCurrentSlide(currentSlide + 1);
+    if (presentation && currentSlide < presentation.slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    }
   };
 
-  if (!presentation) return <div>Loading...</div>;
+  if (!presentation || currentSlide === null) return <div>Loading...</div>;
 
   // Apply the background of each slide
   const getBackgroundStyle = () => {
@@ -158,16 +184,15 @@ const Preview = () => {
         zIndex: code.zIndex,
       }}
     >
-      <SyntaxHighlighter 
-          language={code.language} 
-          style={docco}
-          customStyle={{ padding: 5, margin: 0 }}
-          showLineNumbers
+      <SyntaxHighlighter
+        language={code.language}
+        style={docco}
+        customStyle={{ padding: 5, margin: 0 }}
+        showLineNumbers
       >
         {code.content}
       </SyntaxHighlighter>
     </div>
-    
   );
 
   return (
