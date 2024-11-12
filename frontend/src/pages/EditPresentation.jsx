@@ -1043,6 +1043,7 @@ const EditPresentation = () => {
                 fontSize={code.fontSize}
                 position={code.position || { x: 0, y: 0 }}
                 zIndex={code.zIndex}
+                detectedLang ={code.language}
                 onDelete={() => handleDeleteCode(code.id)}
                 onEdit={() => openEditCodeModal(code.id)}
                 onChange={(newProps) => updateCode(code.id, { position: newProps.position, size: newProps.size })}

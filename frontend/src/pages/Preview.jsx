@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../backend.config.json';
 import { getToken } from '../Auth';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const Preview = () => {
   const { id } = useParams();
@@ -92,13 +94,13 @@ const Preview = () => {
       key={textBox.id}
       style={{
         position: 'absolute',
-        left: textBox.position.x,
-        top: textBox.position.y,
-        fontSize: textBox.fontSize,
+        left: `${textBox.position.x}%`,
+        top: `${textBox.position.y}%`,
+        fontSize: `${textBox.fontSize}em`,
         fontFamily: textBox.fontFamily,
         color: textBox.color || '#000',
-        width: textBox.size.width,
-        height: textBox.size.height,
+        width: `${textBox.size.width}%`,
+        height: `${textBox.size.height}%`,
         zIndex: textBox.zIndex,
       }}
     >
@@ -113,10 +115,10 @@ const Preview = () => {
       alt={image.description || 'Image'}
       style={{
         position: 'absolute',
-        left: image.position.x,
-        top: image.position.y,
-        width: image.size.width,
-        height: image.size.height,
+        left: `${image.position.x}%`,
+        top: `${image.position.y}%`,
+        width: `${image.size.width}%`,
+        height: `${image.size.height}%`,
         zIndex: image.zIndex,
       }}
     />
@@ -133,15 +135,40 @@ const Preview = () => {
         allow="autoplay; encrypted-media"
         style={{
           position: 'absolute',
-          left: video.position.x,
-          top: video.position.y,
-          width: video.size.width,
-          height: video.size.height,
+          left: `${video.position.x}%`,
+          top: `${video.position.y}%`,
+          width: `${video.size.width}%`,
+          height: `${video.size.height}%`,
           zIndex: video.zIndex,
         }}
       />
     );
   };
+
+  const renderCode = (code) => (
+    <div
+      key={code.id}
+      style={{
+        position: 'absolute',
+        left: `${code.position.x}%`,
+        top: `${code.position.y}%`,
+        fontSize: `${code.fontSize}em`,
+        width: `${code.size.width}%`,
+        height: `${code.size.height}%`,
+        zIndex: code.zIndex,
+      }}
+    >
+      <SyntaxHighlighter 
+          language={code.language} 
+          style={docco}
+          customStyle={{ padding: 5, margin: 0 }}
+          showLineNumbers
+      >
+        {code.content}
+      </SyntaxHighlighter>
+    </div>
+    
+  );
 
   return (
     <div style={{ position: 'relative', height: '100vh', margin: '-8px', ...getBackgroundStyle() }}>
@@ -149,15 +176,16 @@ const Preview = () => {
         {presentation.slides[currentSlide].textBoxes?.map(renderTextBox)}
         {presentation.slides[currentSlide].images?.map(renderImage)}
         {presentation.slides[currentSlide].videos?.map(renderVideo)}
+        {presentation.slides[currentSlide].codeBlocks?.map(renderCode)}
       </div>
       <button
-        style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}
+        style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', zIndex: '999' }}
         onClick={goToPreviousSlide}
       >
         ←
       </button>
       <button
-        style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}
+        style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', zIndex: '999' }}
         onClick={goToNextSlide}
       >
         →
