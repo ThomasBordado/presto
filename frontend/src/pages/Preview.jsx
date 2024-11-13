@@ -36,7 +36,7 @@ const Preview = () => {
         const store = response.data.store;
         const presentations = store.presentations || [];
         const foundPresentation = presentations.find(
-          (presentation) => presentation.id === parseInt(id, 10)
+          (presentation) => presentation.id === id
         );
 
         if (foundPresentation) {
