@@ -6,10 +6,21 @@ const StyledVideoContainer = styled.div`
   width: 100%;
   height: 100%;
   cursor: ${(props) => (props.isSelected ? 'move' : 'pointer')};
-  border: ${(props) => (props.isSelected ? '2px solid blue' : '2px solid transparent')};
+  border: ${(props) => (props.isSelected ? '3px solid red' : '3px solid transparent')};
   &:hover {
-    border-color: ${(props) => (props.isSelected ? 'blue' : 'red')};
+    border-color: ${(props) => (props.isSelected ? 'red' : 'red')};
   }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  position: relative;
+  iframe {
+    width: calc(100%);
+    height: calc(100%); 
+    border: none;
+  }
+
 `;
 
 const StyledVideo = ({ 
@@ -157,10 +168,10 @@ const StyledVideo = ({
       minWidth={minSize.minWidth}
       minHeight={minSize.minHeight}
       resizeHandleStyles={isSelected ? {
-        topLeft: { width: '5px', height: '5px', backgroundColor: 'white', top: '4px', left: '4px' },
-        topRight: { width: '5px', height: '5px', backgroundColor: 'white', top: '4px', right: '-4px' },
-        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'white', bottom: '-4px', left: '4px' },
-        bottomRight: { width: '5px', height: '5px', backgroundColor: 'white', bottom: '-4px', right: '-4px' },
+        topLeft: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', left: '0px', zIndex: zIndex + 1 },
+        topRight: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', right: '0px', zIndex: zIndex + 1 },
+        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px', zIndex: zIndex + 1},
+        bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px', zIndex: zIndex + 1 },
       } : {}}
       style={{ zIndex }}
     >
@@ -176,7 +187,7 @@ const StyledVideo = ({
         }}
         onDoubleClick={() => onEdit()}
       >
-        {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' } })}
+        {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' }})}
       </StyledVideoContainer>
     </Rnd>
   );
