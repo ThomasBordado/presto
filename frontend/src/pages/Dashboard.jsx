@@ -9,6 +9,7 @@ import { CardContainer } from '../components/CardStyles';
 import PresentationCard from '../components/PresentationCard';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.div`
   background-color: #ebebeb;
@@ -176,12 +177,12 @@ function Dashboard() {
     };
 
     const newPresentation = {
-      id: Date.now(),
+      id: uuidv4(),
       name: presentationName,
       description: presentationDescription,
       thumbnail: null,
       default_background: background,
-      slides: [{}]
+      slides: [{id: uuidv4()}]
     };
 
     try {

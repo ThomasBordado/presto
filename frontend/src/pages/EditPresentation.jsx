@@ -23,6 +23,8 @@ import StyledVideo from '../components/StyledVideo';
 import AddCodeModal from '../components/AddCodeModal';
 import CodeBlock from '../components/CodeBlock';
 import BackgroundPickerModal from '../components/BackgroundModalPicker';
+import SlideRearrangeModal from '../components/SlideRearrangeModal';
+import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.div`
   background-color: #ebebeb;
@@ -484,7 +486,7 @@ const EditPresentation = () => {
 
   // Create slide
   const handleCreateSlide = async () => {
-    const newSlide = {};
+    const newSlide = {id: uuidv4()};
     const updatedSlides = [...presentation.slides, newSlide];
     await saveSlides(updatedSlides);
     setPresentation((prev) => ({
@@ -948,6 +950,17 @@ const EditPresentation = () => {
     }));
   };
 
+  const [isRearrangeModalOpen, setRearrangeModalOpen] = useState(false);
+
+  const openRearrangeModal = () => setRearrangeModalOpen(true);
+  const closeRearrangeModal = () => setRearrangeModalOpen(false);
+
+  const handleRearrangeSlides = (newOrder) => {
+    const updatedSlides = newOrder.map((slide, index) => ({ ...slide, order: index }));
+    saveSlides(updatedSlides);
+    setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
+  };
+
   return (
     <Container>
       <ErrorDisplay />
@@ -1018,6 +1031,8 @@ const EditPresentation = () => {
           />
           <button onClick={openBackgroundModal}>Background Settings</button>
           <button onClick={handlePreviewClick}>Preview</button>
+          <button onClick={openRearrangeModal}>Rearrange Slides</button>
+
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
@@ -1072,6 +1087,13 @@ const EditPresentation = () => {
           />
 
           <SlideContainer ref={slideContainerRef} style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
+          {isRearrangeModalOpen && (
+            <SlideRearrangeModal
+              slides={presentation.slides}
+              onClose={closeRearrangeModal}
+              onRearrange={handleRearrangeSlides}
+            />
+          )}
             {presentation.slides[currentSlideIndex]?.codeBlocks?.map((code) => (
               <CodeBlock
                 key={code.id}
