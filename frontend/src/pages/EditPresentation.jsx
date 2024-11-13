@@ -491,7 +491,10 @@ const EditPresentation = () => {
       ...prev,
       slides: updatedSlides,
     }));
-    setCurrentSlideIndex(updatedSlides.length - 1);
+
+    const newSlideIndex = updatedSlides.length - 1;
+    setCurrentSlideIndex(newSlideIndex);
+    window.history.replaceState(null, "", `?slide=${newSlideIndex}`);
   };
 
   // Delete slide
@@ -500,13 +503,23 @@ const EditPresentation = () => {
       showError('Cannot delete the only slide. Delete the presentation instead.');
       return;
     }
-    const updatedSlides = presentation.slides.filter((_, index) => index !== currentSlideIndex);
+
+    const updatedSlides = [...presentation.slides];
+    updatedSlides.splice(currentSlideIndex, 1);
+
     await saveSlides(updatedSlides);
     setPresentation((prev) => ({
       ...prev,
       slides: updatedSlides,
     }));
-    setCurrentSlideIndex((prev) => (prev > 0 ? prev - 1 : 0));
+
+    let newSlideIndex = currentSlideIndex;
+    if (currentSlideIndex >= updatedSlides.length) {
+      newSlideIndex = updatedSlides.length - 1;
+    }
+    setCurrentSlideIndex(newSlideIndex);
+    const newUrl = `${window.location.pathname}?slide=${newSlideIndex}`;
+    window.history.replaceState(null, '', newUrl);
   };
 
   const saveSlides = async (updatedSlides) => {
