@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ErrorPopup from '../components/ErrorPopup';
 
 export const useErrorMessage = () => {

@@ -23,15 +23,15 @@ const StyledVideoContainer = styled.div`
 
 `;
 
-const StyledVideo = ({ 
-    position, 
-    size, 
-    zIndex, 
-    onChange, 
-    onDelete, 
-    onEdit,
-    slideContainerRef,
-    children 
+const StyledVideo = ({
+  position,
+  size,
+  zIndex,
+  onChange,
+  onDelete,
+  onEdit,
+  slideContainerRef,
+  children
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
@@ -132,8 +132,8 @@ const StyledVideo = ({
       size={currentSize}
       position={currentPosition}
       onDragStop={(e, d) => {
-        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
-        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width - 5));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height - 5));
 
         const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
 
@@ -142,8 +142,8 @@ const StyledVideo = ({
         onChange({ size: newSize, position: newPosition });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
-        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
-        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x - 5);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y - 5);
 
         const newSize = convertSizeToPercentage(constrainedWidth, constrainedHeight);
         const newPosition = convertPositionToPercentage(position.x, position.y);
@@ -170,7 +170,7 @@ const StyledVideo = ({
       resizeHandleStyles={isSelected ? {
         topLeft: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', left: '0px', zIndex: zIndex + 1 },
         topRight: { width: '5px', height: '5px', backgroundColor: 'black', top: '0px', right: '0px', zIndex: zIndex + 1 },
-        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px', zIndex: zIndex + 1},
+        bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px', zIndex: zIndex + 1 },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px', zIndex: zIndex + 1 },
       } : {}}
       style={{ zIndex }}
@@ -187,7 +187,7 @@ const StyledVideo = ({
         }}
         onDoubleClick={() => onEdit()}
       >
-        {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' }})}
+        {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' } })}
       </StyledVideoContainer>
     </Rnd>
   );

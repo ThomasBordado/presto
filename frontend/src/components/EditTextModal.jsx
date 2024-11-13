@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
@@ -10,7 +10,7 @@ const FormField = styled.div`
 `;
 
 const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
-  const { showError, ErrorDisplay } = useErrorMessage();
+  const { ErrorDisplay } = useErrorMessage();
 
   const textRef = useRef();
   const fontSizeRef = useRef();

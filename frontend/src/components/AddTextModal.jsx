@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
@@ -59,22 +59,22 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
 
       <FormField>
         <label>Font Size (em):</label>
-        <input type="number" step="0.1" ref={fontSizeRef} defaultValue={1}/>
+        <input type="number" step="0.1" ref={fontSizeRef} defaultValue={1} />
       </FormField>
 
       <FormField>
         <label>Text Color (Hex or Colour):</label>
-        <input type="text" ref={colorRef} defaultValue={'black'}/>
+        <input type="text" ref={colorRef} defaultValue={'black'} />
       </FormField>
 
       <FormField>
         <label>Width (%):</label>
-        <input type="number" ref={widthRef} defaultValue={50}/>
+        <input type="number" ref={widthRef} defaultValue={50} />
       </FormField>
 
       <FormField>
         <label>Height (%):</label>
-        <input type="number" ref={heightRef} defaultValue={50}/>
+        <input type="number" ref={heightRef} defaultValue={50} />
       </FormField>
 
       <FormField>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../backend.config.json';
@@ -11,7 +11,7 @@ const Preview = () => {
   const { id } = useParams();
   const [presentation, setPresentation] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(null);
-  const [direction, setDirection] = useState(1); 
+  const [direction, setDirection] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
 

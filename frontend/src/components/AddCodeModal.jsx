@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
@@ -33,11 +33,11 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
       const textarea = codeRef.current;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-  
+
       const tabSpaces = "  ";
-  
+
       textarea.value = textarea.value.substring(0, start) + tabSpaces + textarea.value.substring(end);
-  
+
       textarea.selectionStart = textarea.selectionEnd = start + tabSpaces.length;
     }
   };
@@ -46,14 +46,14 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
     if (code) {
       codeRef.current.value = code.content;
       fontSizeRef.current.value = code.fontSize;
-    } 
+    }
   }, [code]);
 
   const handleAddSave = () => {
     const width = parseInt(widthRef.current.value, 10);
     const height = parseInt(heightRef.current.value, 10);
     const content = codeRef.current.value;
-  
+
     if (width < 0 || width > 100 || height < 0 || height > 100) {
       showError("Width or Height must be between 0 and 100.");
       return;
@@ -65,7 +65,7 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
     else if (detected === 'Python') detected = 'python';
     else if (detected === 'Java') detected = 'Java';
     else detected = 'plaintext';
-  
+
     const newCode = {
       id: uuidv4(),
       content: content,
@@ -74,11 +74,11 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
       position: { x: 0, y: 0 },
       language: detected
     };
-  
+
     onSave(newCode);
     onClose();
   };
-  
+
   const handleEditSave = () => {
     const content = codeRef.current.value;
 
@@ -95,7 +95,7 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
       fontSize: parseFloat(fontSizeRef.current.value),
       language: detected
     };
-  
+
     onSave(updatedCode);
     onClose();
   };
@@ -119,15 +119,15 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
 
       {!code && (
         <>
-        <FormField>
-          <label>Width (%):</label>
-          <input type="number" ref={widthRef} defaultValue={50} />
-        </FormField>
+          <FormField>
+            <label>Width (%):</label>
+            <input type="number" ref={widthRef} defaultValue={50} />
+          </FormField>
 
-        <FormField>
-          <label>Height (%):</label>
-          <input type="number" ref={heightRef} defaultValue={50} />
-        </FormField>
+          <FormField>
+            <label>Height (%):</label>
+            <input type="number" ref={heightRef} defaultValue={50} />
+          </FormField>
         </>
       )}
 
