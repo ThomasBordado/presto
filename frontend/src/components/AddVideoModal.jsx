@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
@@ -31,8 +31,8 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
     const url = urlRef.current.value.trim();
 
     if (width < 0 || width > 100 || height < 0 || height > 100) {
-        showError("Width or Height must be between 0 and 100.");
-        return;
+      showError("Width or Height must be between 0 and 100.");
+      return;
     }
 
     if (!url) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -121,7 +121,7 @@ function Login() {
           <SubmitButton type="submit">Login</SubmitButton>
         </form>
         <FooterText>
-          Don't have an account? <Link to="/register">Sign up</Link>
+          Don&apos;t have an account? <Link to="/register">Sign up</Link>
         </FooterText>
       </LoginBox>
     </Container>

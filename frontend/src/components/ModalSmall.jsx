@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const Overlay = styled.div`
@@ -24,7 +23,7 @@ const Content = styled.div`
   position: relative;
 `;
 
-function ModalSmall({ onClose, children }) {
+function ModalSmall({ _onClose, children }) {
   return (
     <Overlay>
       <Content>

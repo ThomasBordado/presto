@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 
@@ -11,14 +11,14 @@ const ImageContainer = styled.img`
   }
 `;
 
-const StyledImage = ({ 
-  position, 
-  src, 
-  alt, 
-  size, 
-  zIndex, 
-  onChange, 
-  onDelete, 
+const StyledImage = ({
+  position,
+  src,
+  alt,
+  size,
+  zIndex,
+  onChange,
+  onDelete,
   onEdit,
   slideContainerRef
 }) => {
@@ -123,7 +123,7 @@ const StyledImage = ({
       onDragStop={(e, d) => {
         const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width));
         const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height));
-        
+
         const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
 
         setCurrentPosition({ x: constrainedX, y: constrainedY });
@@ -166,7 +166,7 @@ const StyledImage = ({
     >
       <ImageContainer
         ref={containerRef}
-        src={src} 
+        src={src}
         alt={alt}
         onClick={handleClickInside}
         onContextMenu={(e) => {

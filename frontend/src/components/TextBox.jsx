@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 
@@ -20,18 +20,18 @@ const TextBoxContainer = styled.div`
   }
 `;
 
-const TextBox = ({ 
-  position, 
-  size, 
-  fontSize, 
-  color, 
-  zIndex, 
-  text, 
-  onChange, 
-  onDelete, 
-  onEdit, 
+const TextBox = ({
+  position,
+  size,
+  fontSize,
+  color,
+  zIndex,
+  text,
+  onChange,
+  onDelete,
+  onEdit,
   fontFamily,
-  slideContainerRef  
+  slideContainerRef
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
@@ -132,8 +132,8 @@ const TextBox = ({
       size={currentSize}
       position={currentPosition}
       onDragStop={(e, d) => {
-        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
-        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width - 5));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height - 5));
 
         const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
 
@@ -142,8 +142,8 @@ const TextBox = ({
         onChange({ size: newSize, position: newPosition });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
-        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
-        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x - 5);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y - 5);
 
         const newSize = convertSizeToPercentage(constrainedWidth, constrainedHeight);
         const newPosition = convertPositionToPercentage(position.x, position.y);

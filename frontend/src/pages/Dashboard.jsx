@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logout from '../components/Logout';
 import { isAuthenticated, getToken } from '../Auth';
@@ -166,7 +166,7 @@ function Dashboard() {
 
     const background = {
       type: 'solid',
-      color:'#ffffff',
+      color: '#ffffff',
       gradient: {
         start: '#ffffff',
         end: '#000000',

@@ -20,17 +20,17 @@ const CodeBlockContainer = styled.div`
   }
 `;
 
-const CodeBlock = ({ 
-  position, 
-  size, 
-  fontSize, 
-  zIndex, 
+const CodeBlock = ({
+  position,
+  size,
+  fontSize,
+  zIndex,
   code,
   detectedLang,
-  onChange, 
-  onDelete, 
-  onEdit, 
-  slideContainerRef  
+  onChange,
+  onDelete,
+  onEdit,
+  slideContainerRef
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const containerRef = useRef(null);
@@ -128,21 +128,21 @@ const CodeBlock = ({
 
   return (
     <Rnd
-        size={currentSize}
-        position={currentPosition}
-        onDragStop={(e, d) => {
-        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width-5));
-        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height-5));
+      size={currentSize}
+      position={currentPosition}
+      onDragStop={(e, d) => {
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width - 5));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height - 5));
 
         const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
 
         setCurrentPosition({ x: constrainedX, y: constrainedY });
         const newSize = convertSizeToPercentage(currentSize.width, currentSize.height);
         onChange({ size: newSize, position: newPosition });
-        }}
-        onResizeStop={(e, direction, ref, delta, position) => {
-        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x-5);
-        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y-5);
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x - 5);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y - 5);
 
         const newSize = convertSizeToPercentage(constrainedWidth, constrainedHeight);
         const newPosition = convertPositionToPercentage(position.x, position.y);
@@ -151,7 +151,7 @@ const CodeBlock = ({
         setCurrentPosition(position);
 
         onChange({ size: newSize, position: newPosition });
-        }}
+      }}
       bounds="parent"
       disableDragging={!isSelected}
       enableResizing={isSelected ? {
@@ -184,11 +184,11 @@ const CodeBlock = ({
         }}
         onDoubleClick={() => onEdit()}
       >
-        <SyntaxHighlighter 
-            language={detectedLang} 
-            style={docco}
-            customStyle={{ padding: 5, margin: 0 }}
-            showLineNumbers
+        <SyntaxHighlighter
+          language={detectedLang}
+          style={docco}
+          customStyle={{ padding: 5, margin: 0 }}
+          showLineNumbers
         >
           {code}
         </SyntaxHighlighter>
