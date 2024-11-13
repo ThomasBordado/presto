@@ -253,7 +253,7 @@ const EditPresentation = () => {
         const presentations = store.presentations || [];
 
         const foundPresentation = presentations.find(
-          (presentation) => presentation.id === parseInt(id, 10)
+          (presentation) => presentation.id === id
         );
 
         if (foundPresentation) {
@@ -296,7 +296,7 @@ const EditPresentation = () => {
       const presentations = store.presentations;
 
       const updatedPresentations = presentations.filter(
-        (presentation) => presentation.id !== parseInt(id, 10)
+        (presentation) => presentation.id !== id
       );
 
       await axios.put(
@@ -376,7 +376,7 @@ const EditPresentation = () => {
       const presentations = store.presentations || [];
 
       const updatedPresentations = presentations.map((pres) =>
-        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+        pres.id === id ? updatedPresentation : pres
       );
 
       await axios.put(
@@ -432,7 +432,7 @@ const EditPresentation = () => {
       const presentations = store.presentations || [];
 
       const updatedPresentations = presentations.map((pres) =>
-        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+        pres.id === id ? updatedPresentation : pres
       );
 
       await axios.put(
@@ -468,7 +468,7 @@ const EditPresentation = () => {
         const presentations = store.presentations || [];
 
         const updatedPresentations = presentations.map((pres) =>
-          pres.id === parseInt(id, 10) ? updatedPresentation : pres
+          pres.id === id ? updatedPresentation : pres
         );
 
         await axios.put(
@@ -486,7 +486,7 @@ const EditPresentation = () => {
 
   // Create slide
   const handleCreateSlide = async () => {
-    const newSlide = {id: uuidv4()};
+    const newSlide = { id: uuidv4() };
     const updatedSlides = [...presentation.slides, newSlide];
     await saveSlides(updatedSlides);
     setPresentation((prev) => ({
@@ -541,7 +541,7 @@ const EditPresentation = () => {
       const presentations = store.presentations || [];
 
       const updatedPresentations = presentations.map((pres) =>
-        pres.id === parseInt(id, 10) ? updatedPresentation : pres
+        pres.id === id ? updatedPresentation : pres
       );
 
       await axios.put(
@@ -1087,13 +1087,13 @@ const EditPresentation = () => {
           />
 
           <SlideContainer ref={slideContainerRef} style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
-          {isRearrangeModalOpen && (
-            <SlideRearrangeModal
-              slides={presentation.slides}
-              onClose={closeRearrangeModal}
-              onRearrange={handleRearrangeSlides}
-            />
-          )}
+            {isRearrangeModalOpen && (
+              <SlideRearrangeModal
+                slides={presentation.slides}
+                onClose={closeRearrangeModal}
+                onRearrange={handleRearrangeSlides}
+              />
+            )}
             {presentation.slides[currentSlideIndex]?.codeBlocks?.map((code) => (
               <CodeBlock
                 key={code.id}
