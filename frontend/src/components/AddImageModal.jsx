@@ -192,7 +192,7 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
           <InputField
             id="imageWidth"
             type="number"
-            placeholder="Enter a image box width"
+            placeholder="Enter an image box width"
             ref={widthRef}
             defaultValue={50}
             aria-describedby="imageWidthDesc"
@@ -203,7 +203,7 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
           <InputField
             id="imageHeight"
             type="number"
-            placeholder="Enter a image box height"
+            placeholder="Enter an image box height"
             ref={heightRef}
             defaultValue={50}
             aria-describedby="imageHeightDesc"
