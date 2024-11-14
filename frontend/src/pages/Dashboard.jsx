@@ -18,12 +18,12 @@ const Container = styled.div`
   margin: -8px;
 `;
 
-const HeaderBar = styled.div`
+const HeaderBar = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background-color: rgba(0, 0, 0, 0.8);
+  padding: 16px 20px;
+  background-color: #333333;
   color: white;
 `;
 
@@ -43,7 +43,7 @@ const ButtonContainer = styled.div`
 const NewPresentationButton = styled.button`
   width: 100%;
   max-width: 1367px;
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
   padding: 10px;
   border: none;
@@ -51,13 +51,18 @@ const NewPresentationButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
 
-const PresentationSection = styled.div`
+const PresentationSection = styled.main`
   max-width: 1400px;
   margin: 30px auto;
   padding: 0 20px;
@@ -100,7 +105,7 @@ const InputField = styled.input`
 
 const SubmitButton = styled.button`
   width: 100%;
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
   padding: 10px;
   border: none;
@@ -108,10 +113,20 @@ const SubmitButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #004080;
   }
+
+  &:focus {
+    outline: 2px solid #ffffff;
+  }
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
 `;
 
 function Dashboard() {
@@ -154,7 +169,9 @@ function Dashboard() {
     setIsModalOpen(false);
   };
 
-  const handleCreatePresentation = async () => {
+  const handleCreatePresentation = async (e) => {
+    e.preventDefault();
+
     if (!presentationName.trim()) {
       return showError('Presentation name is required.');
     }
@@ -182,7 +199,7 @@ function Dashboard() {
       description: presentationDescription,
       thumbnail: null,
       default_background: background,
-      slides: [{id: uuidv4()}]
+      slides: [{ id: uuidv4() }]
     };
 
     try {
@@ -207,39 +224,54 @@ function Dashboard() {
 
   return (
     <Container>
+      <ErrorDisplay aria-live="assertive" />
+
       <HeaderBar>
         <DashboardTitle>Dashboard</DashboardTitle>
-        <Logout />
+        <Logout aria-label="Logout of Presto" />
       </HeaderBar>
-      <ErrorDisplay />
-      <ButtonContainer>
-        <NewPresentationButton onClick={handleOpenModal}>New Presentation</NewPresentationButton>
+
+      <ButtonContainer aria-label="New presentation creation">
+        <NewPresentationButton onClick={handleOpenModal} aria-label="Create new presentation button">
+          New Presentation
+        </NewPresentationButton>
       </ButtonContainer>
 
       {isModalOpen && (
-        <ModalMedium onClose={handleCloseModal}>
-          <ModalTitle>Create a Presentation</ModalTitle>
-          <FormLabel>Title:</FormLabel>
-          <InputField
-            type="text"
-            value={presentationName}
-            onChange={(e) => setPresentationName(e.target.value)}
-            placeholder="Enter presentation name"
-          />
-          <FormLabel>Description:</FormLabel>
-          <InputField
-            type="text"
-            value={presentationDescription}
-            onChange={(e) => setPresentationDescription(e.target.value)}
-            placeholder="Enter description"
-          />
-          <SubmitButton onClick={handleCreatePresentation}>Create</SubmitButton>
+        <ModalMedium onClose={handleCloseModal} aria-labelledby="modal-title">
+          <form onSubmit={handleCreatePresentation} aria-label='New presentation form'>
+            <ModalTitle id="modal-title">Create a Presentation</ModalTitle>
+            <FormLabel htmlFor="presentation-title">Title:</FormLabel>
+            <InputField
+              id="presentation-title"
+              type="text"
+              placeholder="Enter presentation name"
+              value={presentationName}
+              onChange={(e) => setPresentationName(e.target.value)}
+              aria-required="true"
+              aria-describedby="presentationTitleDesc"
+            />
+            <HiddenDescription id="presentationTitleDesc">Enter the presentation title</HiddenDescription>
+
+            <FormLabel htmlFor="presentation-description">Description:</FormLabel>
+            <InputField
+              id="presentation-description"
+              type="text"
+              placeholder="Enter presentation description"
+              value={presentationDescription}
+              onChange={(e) => setPresentationDescription(e.target.value)}
+              aria-describedby="presentationDescriptionDesc"
+            />
+            <HiddenDescription id="presentationDescriptionDesc">Enter the presentation description</HiddenDescription>
+
+            <SubmitButton type="submit" aria-label="Create presentation button">Create</SubmitButton>
+          </form>
         </ModalMedium>
       )}
 
-      <PresentationSection>
+      <PresentationSection aria-label="Your presentations">
         <PresentationHeading>Your Presentations</PresentationHeading>
-        <CardContainer>
+        <CardContainer aria-label="Presentation cards">
           {presentations.map((presentation) => (
             <PresentationCard
               key={presentation.id}
@@ -248,6 +280,7 @@ function Dashboard() {
               slideCount={presentation.slides.length}
               thumbnail={presentation.thumbnail}
               onClick={() => handleCardClick(presentation.id)}
+              aria-label={`Open presentation: ${presentation.name}`}
             />
           ))}
         </CardContainer>
