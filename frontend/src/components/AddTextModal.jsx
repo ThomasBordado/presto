@@ -53,33 +53,33 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
       <h3>Add Text Box</h3>
 
       <FormField>
-        <label>Text Content:</label>
-        <input type="text" ref={textRef} />
+        <label for="contentInput">Text Content:</label>
+        <input id="contentInput" type="text" ref={textRef} />
       </FormField>
 
       <FormField>
-        <label>Font Size (em):</label>
-        <input type="number" step="0.1" ref={fontSizeRef} defaultValue={1} />
+        <label for="fontSizeInput">Font Size (em):</label>
+        <input id="fontSizeInput" type="number" step="0.1" ref={fontSizeRef} defaultValue={1} />
       </FormField>
 
       <FormField>
-        <label>Text Color (Hex or Colour):</label>
-        <input type="text" ref={colorRef} defaultValue={'black'} />
+        <label for="colourInput">Text Color (Hex or Colour):</label>
+        <input id="colourInput" type="text" ref={colorRef} defaultValue={'black'} />
       </FormField>
 
       <FormField>
-        <label>Width (%):</label>
-        <input type="number" ref={widthRef} defaultValue={50} />
+        <label for="widthInput">Width (%):</label>
+        <input id="widthInput" type="number" ref={widthRef} defaultValue={50} />
       </FormField>
 
       <FormField>
-        <label>Height (%):</label>
-        <input type="number" ref={heightRef} defaultValue={50} />
+        <label for="heightInput">Height (%):</label>
+        <input id="heightInput" type="number" ref={heightRef} defaultValue={50} />
       </FormField>
 
       <FormField>
-        <label>Font Family:</label>
-        <select ref={fontFamilyRef}>
+        <label for="fontFamilyInput">Font Family:</label>
+        <select id="fontFamilyInput" ref={fontFamilyRef}>
           <option value="Arial">Arial</option>
           <option value="Courier New">Courier New</option>
           <option value="Times New Roman">Times New Roman</option>
