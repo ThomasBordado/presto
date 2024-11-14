@@ -11,7 +11,7 @@ const SlideNumberStyle = styled.div`
   background: rgba(0, 0, 0, 0.65);
   color: white;
   padding: 5px;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   display: flex;
   align-items: center;
