@@ -193,6 +193,8 @@ const Preview = () => {
   const renderTextBox = (textBox) => (
     <div
       key={textBox.id}
+      aria-label={`Text box: ${textBox.text}`}
+      tabIndex={0}
       style={{
         position: 'absolute',
         left: `${textBox.position.x}%`,
@@ -214,6 +216,7 @@ const Preview = () => {
       key={image.id}
       src={image.src}
       alt={image.description || 'Image'}
+      tabIndex={0}
       style={{
         position: 'absolute',
         left: `${image.position.x}%`,
@@ -226,12 +229,10 @@ const Preview = () => {
   );
 
   const renderVideo = (video) => {
-    const embedUrl = `https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0}`;
-
     return (
       <iframe
         key={video.id}
-        src={embedUrl}
+        src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0}`}
         title={video.description || 'Video'}
         allow="autoplay; encrypted-media"
         style={{
@@ -249,6 +250,8 @@ const Preview = () => {
   const renderCode = (code) => (
     <div
       key={code.id}
+      tabIndex={0}
+      aria-label={`Code block: ${code.language}`}
       style={{
         position: 'absolute',
         left: `${code.position.x}%`,
