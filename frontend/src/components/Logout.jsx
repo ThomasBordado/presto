@@ -42,7 +42,7 @@ function Logout() {
       removeToken();
       navigate('/');
     } catch (error) {
-      console.error('Error logging out:', error.response.data.error);
+      console.error('Error logging out:', error.message);
     }
   };
 
