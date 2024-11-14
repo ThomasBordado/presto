@@ -4,10 +4,60 @@ import styled from 'styled-components';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
 import { v4 as uuidv4 } from 'uuid';
 
-const FormField = styled.div`
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
+const FormTitle = styled.h2`
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+`;
+
+const FormLabel = styled.label`
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 2px solid #0056b3;
+  }
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  background-color: #0056b3;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
+  }
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
 `;
 
 const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
@@ -94,40 +144,62 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
   if (!isOpen) return null;
 
   return (
-    <ModalMedium onClose={onClose}>
-      <ErrorDisplay />
-      <h3>{video ? 'Edit Video' : 'Add Video'}</h3>
+    <ModalMedium onClose={onClose} aria-labelledby="modal-title">
+      <ErrorDisplay aria-live="assertive" />
+      <FormTitle id="modal-title">{video ? 'Edit Video' : 'Add Video'}</FormTitle>
 
-      <FormField>
-        <label>YouTube Video URL:</label>
-        <input type="text" ref={urlRef} defaultValue={video?.url || ''} />
-      </FormField>
+      <FormLabel htmlFor="videoURL">YouTube Video URL:</FormLabel>
+      <InputField
+        id="video-url"
+        type="text"
+        placeholder="Enter video URL"
+        ref={urlRef}
+        defaultValue={video?.url || ''}
+        aria-required="true"
+        aria-describedby="videoURLDesc"
+      />
+      <HiddenDescription id="videoURLDesc">Video URL</HiddenDescription>
 
       {!video && (
         <>
-          <FormField>
-            <label>Width (%):</label>
-            <input type="number" ref={widthRef} defaultValue={video?.size?.width || 50} min="1" max="100" />
-          </FormField>
+          <FormLabel htmlFor="videoWidth">Width (%):</FormLabel>
+          <InputField
+            id="videoWidth"
+            type="number"
+            placeholder="Enter a video box width"
+            ref={widthRef}
+            defaultValue={video?.size?.width || 50}
+            min="1"
+            max="100"
+            aria-required="true"
+            aria-describedby="videoWidthDesc"
+          />
+          <HiddenDescription id="videoWidthDesc">Width of video box to be added</HiddenDescription>
 
-          <FormField>
-            <label>Height (%):</label>
-            <input type="number" ref={heightRef} defaultValue={video?.size?.height || 50} min="1" max="100" />
-          </FormField>
+          <FormLabel htmlFor="videoHeight">Height (%):</FormLabel>
+          <InputField
+            id="videoHeight"
+            type="number"
+            placeholder="Enter a video box height"
+            ref={heightRef}
+            defaultValue={video?.size?.height || 50}
+            min="1"
+            max="100"
+            aria-required="true"
+            aria-describedby="videoHeightDesc"
+          />
+          <HiddenDescription id="videoHeightDesc">Height of video box to be added</HiddenDescription>
         </>
-
       )}
 
-      <FormField>
-        <label>
-          <input type="checkbox" ref={autoplayRef} />
-          Auto-play
-        </label>
-      </FormField>
+      <FormLabel htmlFor="videoAutoplay">
+        <input id="videoAutoplay" type="checkbox" ref={autoplayRef} />
+        Auto-play
+      </FormLabel>
 
-      <button onClick={video ? handleEditSave : handleAddSave}>
+      <SubmitButton onClick={video ? handleEditSave : handleAddSave}>
         {video ? "Save Changes" : "Add Video"}
-      </button>
+      </SubmitButton>
     </ModalMedium>
   );
 };
