@@ -17,7 +17,7 @@ const Container = styled.div`
   background-color: rgba(0, 0, 0, 0.8);
 `;
 
-const RegisterBox = styled.div`
+const RegisterBox = styled.main`
   background-color: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: 8px;
@@ -25,7 +25,7 @@ const RegisterBox = styled.div`
   text-align: center;
 `;
 
-const Title = styled.h2`
+const FormTitle = styled.h2`
   margin: 0;
   font-family: Arial, sans-serif;
   font-size: 24px;
@@ -49,6 +49,15 @@ const InputField = styled.input`
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+
+  &:focus {
+    outline: 2px solid #0056b3;
+  }
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
 `;
 
 const SubmitButton = styled.button`
@@ -61,9 +70,13 @@ const SubmitButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: #0056b3;
+  }
+
+  &:focus {
+    outline: 2px solid #0056b3;
   }
 `;
 
@@ -94,7 +107,7 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      return showError('Passwords do not match. Please reenter your password and try again.');
+      return showError('Passwords do not match. Please re-enter your password and try again.');
     }
 
     try {
@@ -109,34 +122,62 @@ function Register() {
   return (
     <Container>
       <RegisterBox>
-        <Title>Register</Title>
-        <ErrorDisplay />
-        <form onSubmit={handleSubmit}>
-          <FormLabel>Email:</FormLabel>
+        <FormTitle>Register</FormTitle>
+        <ErrorDisplay aria-live="assertive" />
+        <form onSubmit={handleSubmit} aria-label="Registration form">
+          <FormLabel htmlFor="email">Email:</FormLabel>
           <InputField
+            id="email"
             type="email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-required="true"
+            aria-describedby="emailDesc"
+            autoComplete="email"
           />
-          <FormLabel>Name:</FormLabel>
+          <HiddenDescription id="emailDesc">Enter your email address</HiddenDescription>
+
+          <FormLabel htmlFor="name">Name:</FormLabel>
           <InputField
+            id="name"
             type="text"
+            placeholder="Enter your full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            aria-required="true"
+            aria-describedby="nameDesc"
+            autoComplete="name"
           />
-          <FormLabel>Password:</FormLabel>
+          <HiddenDescription id="nameDesc">Enter your full name</HiddenDescription>
+
+          <FormLabel htmlFor="password">Password:</FormLabel>
           <InputField
+            id="password"
             type="password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-required="true"
+            aria-describedby="passwordDesc"
+            autoComplete="new-password"
           />
-          <FormLabel>Confirm Password:</FormLabel>
+          <HiddenDescription id="passwordDesc">Enter a strong password</HiddenDescription>
+
+          <FormLabel htmlFor="confirmPassword">Confirm Password:</FormLabel>
           <InputField
+            id="confirmPassword"
             type="password"
+            placeholder="Confirm your password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            aria-required="true"
+            aria-describedby="confirmPasswordDesc"
+            autoComplete="new-password"
           />
-          <SubmitButton type="submit">Register</SubmitButton>
+          <HiddenDescription id="confirmPasswordDesc">Re-enter your password to confirm</HiddenDescription>
+
+          <SubmitButton type="submit" aria-label="Register button">Register</SubmitButton>
         </form>
         <FooterText>
           Already have an account? <Link to="/login">Login</Link>
