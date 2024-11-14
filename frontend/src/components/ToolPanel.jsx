@@ -10,7 +10,7 @@ const ToolPanelContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 500;
   display: flex;
   flex-direction: row;
   gap: 10px;

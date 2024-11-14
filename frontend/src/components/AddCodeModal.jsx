@@ -5,19 +5,77 @@ import { useErrorMessage } from '../hooks/UseErrorMessage';
 import { v4 as uuidv4 } from 'uuid';
 import detectLang from 'lang-detector';
 
-const FormField = styled.div`
-  margin-bottom: 5px;
-  display: flex;
-  flex-direction: column;
+const FormTitle = styled.h2`
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
 `;
 
-const TextArea = styled.textarea`
+const FormLabel = styled.label`
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+`;
+
+const InputField = styled.input`
   width: 100%;
-  height: 200px; 
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 2px solid #0056b3;
+  }
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  background-color: #0056b3;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
+  }
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
+`;
+
+const FormTextArea = styled.textarea`
+  width: 100%;
+  height: 200px;
   resize: vertical;
   padding: 8px;
   font-family: monospace;
   font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 5px;
+
+  &:focus {
+    outline: 2px solid #0056b3;
+  }
 `;
 
 const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
@@ -103,37 +161,65 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
   if (!isOpen) return null;
 
   return (
-    <ModalMedium onClose={onClose}>
-      <ErrorDisplay />
-      <h3>{code ? "Edit Code" : "Add Code"}</h3>
+    <ModalMedium onClose={onClose} aria-labelledby="addCodeBoxModal" >
+      <ErrorDisplay aria-live="assertive" />
+      <FormTitle id="addCodeBoxModal">{code ? "Edit Code" : "Add Code"}</FormTitle>
 
-      <FormField>
-        <label>Code Block Content:</label>
-        <TextArea ref={codeRef} defaultValue={code?.content || ''} onKeyDown={handleTabPress} />
-      </FormField>
+      <FormLabel htmlFor="codeContent">Code Block Content:</FormLabel>
+      <FormTextArea
+        id="codeContent"
+        placeholder="Enter your code"
+        ref={codeRef}
+        defaultValue={code?.content || ''}
+        onKeyDown={handleTabPress}
+        aria-required="true"
+        aria-describedby="codeContentDesc"
+      />
+      <HiddenDescription id="codeContentDesc">
+        Enter your code. Use &quot;Tab&quot; for indentation inside the text area.
+      </HiddenDescription>
 
-      <FormField>
-        <label>Font Size (em):</label>
-        <input type="number" step="0.1" ref={fontSizeRef} defaultValue={code?.fontSize || 1} />
-      </FormField>
+      <FormLabel htmlFor="codeFontSize">Font Size (em):</FormLabel>
+      <InputField
+        id="codeFontSize"
+        type="number"
+        placeholder="Enter code font size"
+        step="0.1"
+        ref={fontSizeRef}
+        defaultValue={code?.fontSize || 1}
+        aria-describedby="codeFontSizeDesc"
+      />
+      <HiddenDescription id="codeFontSizeDesc">Enter code font size</HiddenDescription>
 
       {!code && (
         <>
-          <FormField>
-            <label>Width (%):</label>
-            <input type="number" ref={widthRef} defaultValue={50} />
-          </FormField>
+          <FormLabel htmlFor="codeWidth">Width (%):</FormLabel>
+          <InputField
+            id="codeWidth"
+            type="number"
+            placeholder="Enter a code box width"
+            ref={widthRef}
+            defaultValue={50}
+            aria-describedby="codeWidthDesc"
+          />
+          <HiddenDescription id="codeWidthDesc">Width of code box to be added</HiddenDescription>
 
-          <FormField>
-            <label>Height (%):</label>
-            <input type="number" ref={heightRef} defaultValue={50} />
-          </FormField>
+          <FormLabel htmlFor="codeHeight">Height (%):</FormLabel>
+          <InputField
+            id="codeHeight"
+            type="number"
+            placeholder="Enter a code box height"
+            ref={heightRef}
+            defaultValue={50}
+            aria-describedby="codeHeightDesc"
+          />
+          <HiddenDescription id="codeHeightDesc">Height of code box to be added</HiddenDescription>
         </>
       )}
 
-      <button onClick={code ? handleEditSave : handleAddSave}>
+      <SubmitButton onClick={code ? handleEditSave : handleAddSave}>
         {code ? "Save Changes" : "Add Code"}
-      </button>
+      </SubmitButton>
     </ModalMedium>
   );
 };

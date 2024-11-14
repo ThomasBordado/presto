@@ -8,20 +8,27 @@ const SlideGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 10px;
-  padding: 20px;
-  background-color: #fff;
+`;
+
+const FormTitle = styled.h2`
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
 `;
 
 const SlideBox = styled.div`
+  font-family: Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid #ccc;
+  border-radius: 8px;
   background-color: #f9f9f9;
   width: 80px;
   height: 80px;
   font-size: 1.2em;
-  font-weight: bold;
   cursor: pointer;
   user-select: none;
 `;
@@ -30,33 +37,45 @@ const RearrangeModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
+  align-items: center;
+  z-index: 999;
 `;
 
 const RearrangeModalContent = styled.div`
-  background: white;
-  padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 600px;
+  background-color: #ebebeb;
+  padding: 40px;
+  border-radius: 8px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 `;
 
 const CloseButton = styled.button`
-  background-color: #f44336;
-  color: white;
-  padding: 10px;
+  font-family: Arial, sans-serif;
+  background-color: #b22222;
+  width: 100%;
+  color: #ffffff;
+  padding: 8px 21px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+
   &:hover {
-    background-color: #f6656c;
+    background-color: #8B1A1A;
+  }
+
+  &:focus {
+    outline: 2px solid white;
   }
 `;
 
@@ -76,6 +95,7 @@ const SlideRearrangeModal = ({ slides, onClose, onRearrange }) => {
   return (
     <RearrangeModalOverlay>
       <RearrangeModalContent>
+        <FormTitle id="rearrange-title">Rearrange Slides</FormTitle>
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={orderedSlides.map(slide => slide.id)}>
             <SlideGrid>
@@ -85,7 +105,7 @@ const SlideRearrangeModal = ({ slides, onClose, onRearrange }) => {
             </SlideGrid>
           </SortableContext>
         </DndContext>
-        <CloseButton onClick={onClose}>Close</CloseButton>
+        <CloseButton onClick={onClose} aria-label="Close rearrange slides modal">Close</CloseButton>
       </RearrangeModalContent>
     </RearrangeModalOverlay>
   );

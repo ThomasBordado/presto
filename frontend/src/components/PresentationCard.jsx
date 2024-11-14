@@ -13,14 +13,20 @@ const PresentationCardContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
 
   &:hover {
     background-color: #e0e0e0;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
+  &:focus {
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.5);
+    background-color: #e0e0e0;
+  }
 `;
 
-const ThumbnailContainer = styled.div`
+const ThumbnailContainer = styled.figure`
   width: 100%;
   height: 65%;
   background-color: ${({ $thumbnail }) => ($thumbnail ? 'transparent' : '#999')};
@@ -30,9 +36,10 @@ const ThumbnailContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0;
 `;
 
-const Info = styled.div`
+const Info = styled.figcaption`
   padding: 8px;
   flex-grow: 1;
 `;
@@ -61,11 +68,22 @@ const format = (str, maxLength) => {
 };
 
 const PresentationCard = ({ name, description, slideCount, thumbnail, onClick }) => (
-  <PresentationCardContainer onClick={onClick}>
+  <PresentationCardContainer
+    onClick={onClick}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onClick();
+      }
+    }}
+    role="button"
+    tabIndex="0"
+    aria-label={`Open presentation titled ${name} with description ${description} containing ${slideCount} ${slideCount === 1 ? 'slide' : 'slides'}`}
+  >
     <ThumbnailContainer $thumbnail={thumbnail} />
     <Info>
-      <Title>{format(name, 26)}</Title>
-      {description && <Description>{format(description, 32)}</Description>}
+      <Title>{format(name, 21)}</Title>
+      {description && <Description>{format(description, 26)}</Description>}
       <SlideCount>{slideCount} Slide{slideCount !== 1 ? 's' : ''}</SlideCount>
     </Info>
   </PresentationCardContainer>

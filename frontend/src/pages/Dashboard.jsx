@@ -58,7 +58,8 @@ const NewPresentationButton = styled.button`
   }
 
   &:focus {
-    outline: 2px solid #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.5);
+    outline: 2px solid #e0e0e0;
   }
 `;
 
@@ -75,6 +76,7 @@ const PresentationHeading = styled.h3`
   font-family: Arial, sans-serif;
   font-size: 24px;
   text-indent: 16px;
+  margin: 24px 0 16px 0;
 `;
 
 const ModalTitle = styled.h3`
@@ -206,13 +208,6 @@ function Dashboard() {
     };
 
     let thumbnailURL = thumbnail;
-
-    if (thumbnail instanceof File) {
-      thumbnailURL = await uploadThumbnail(thumbnail);
-      if (!thumbnailURL) {
-        return showError('Failed to upload thumbnail.');
-      }
-    }
 
     const newPresentation = {
       id: uuidv4(),
