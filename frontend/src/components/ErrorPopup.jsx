@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const ErrorContainer = styled.div`
@@ -5,7 +6,7 @@ const ErrorContainer = styled.div`
   top: 20px;
   right: 20px;
   padding: 15px 15px 15px 25px;
-  background-color: #551c27;
+  background-color: #b22222;
   color: #ffffff;
   border-radius: 5px;
   display: flex;
@@ -14,7 +15,7 @@ const ErrorContainer = styled.div`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   font-family: Arial, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
 `;
 
 const CloseButton = styled.button`
@@ -27,12 +28,36 @@ const CloseButton = styled.button`
 `;
 
 const ErrorPopup = ({ message, onClose }) => {
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (message) {
+      closeButtonRef.current?.focus();
+    }
+  }, [message]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      onClose();
+    }
+  };
+
   if (!message) return null;
 
   return (
-    <ErrorContainer>
+    <ErrorContainer
+      role="alert"
+      aria-live="assertive"
+      onKeyDown={handleKeyDown}
+    >
       <span>{message}</span>
-      <CloseButton onClick={onClose}>×</CloseButton>
+      <CloseButton
+        ref={closeButtonRef}
+        onClick={onClose}
+        aria-label="Close error message"
+      >
+        ×
+      </CloseButton>
     </ErrorContainer>
   );
 };
