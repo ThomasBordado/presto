@@ -208,7 +208,6 @@ const EditPresentation = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTitleEditModalOpen, setIsTitleEditModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [setThumbnail] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isAddTextModalOpen, setIsAddTextModalOpen] = useState(false);
   const [isEditTextModalOpen, setIsEditTextModalOpen] = useState(false);
@@ -259,7 +258,6 @@ const EditPresentation = () => {
         if (foundPresentation) {
           setPresentation(foundPresentation);
           setNewTitle(foundPresentation.name);
-          setThumbnail(foundPresentation.thumbnail || '');
 
           const urlParams = new URLSearchParams(window.location.search);
           if (!urlParams.has("slide")) {
@@ -478,7 +476,6 @@ const EditPresentation = () => {
         );
 
         setPresentation(updatedPresentation);
-        setThumbnail(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -952,8 +949,14 @@ const EditPresentation = () => {
 
   const [isRearrangeModalOpen, setRearrangeModalOpen] = useState(false);
 
-  const openRearrangeModal = () => setRearrangeModalOpen(true);
-  const closeRearrangeModal = () => setRearrangeModalOpen(false);
+  const openRearrangeModal = () => {
+    setRearrangeModalOpen(true);
+    setModalOpen(true);
+  }
+  const closeRearrangeModal = () => {
+    setRearrangeModalOpen(false);
+    setModalOpen(false);
+  }
 
   const handleRearrangeSlides = (newOrder) => {
     const updatedSlides = newOrder.map((slide, index) => ({ ...slide, order: index }));
@@ -1123,7 +1126,7 @@ const EditPresentation = () => {
                 <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0}&mute=${video.autoplay ? 1 : 0}`}
+                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=${video.autoplay ? 1 : 0}&mute=${video.autoplay ? 1 : 0}&enablejsapi=1`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   title="YouTube Video"
