@@ -103,6 +103,15 @@ const InputField = styled.input`
   box-sizing: border-box;
 `;
 
+const FileInput = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+
 const SubmitButton = styled.button`
   width: 100%;
   background-color: #0056b3;
@@ -134,6 +143,7 @@ function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [presentationName, setPresentationName] = useState('');
   const [presentationDescription, setPresentationDescription] = useState('');
+  const [thumbnail, setThumbnail] = useState(null);
   const [presentations, setPresentations] = useState([]);
   const { showError, ErrorDisplay } = useErrorMessage();
 
@@ -156,6 +166,7 @@ function Dashboard() {
       });
       const store = response.data.store;
       setPresentations(store.presentations || []);
+      setThumbnail(store.thumbnail || '')
     } catch (error) {
       console.error('Error fetching data store:', error);
     }
@@ -167,6 +178,7 @@ function Dashboard() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setThumbnail(null);
   };
 
   const handleCreatePresentation = async (e) => {
@@ -193,11 +205,20 @@ function Dashboard() {
       image: '',
     };
 
+    let thumbnailURL = thumbnail;
+
+    if (thumbnail instanceof File) {
+      thumbnailURL = await uploadThumbnail(thumbnail);
+      if (!thumbnailURL) {
+        return showError('Failed to upload thumbnail.');
+      }
+    }
+
     const newPresentation = {
       id: uuidv4(),
       name: presentationName,
       description: presentationDescription,
-      thumbnail: null,
+      thumbnail: thumbnailURL,
       default_background: background,
       slides: [{ id: uuidv4() }]
     };
@@ -212,9 +233,21 @@ function Dashboard() {
       setPresentations(updatedPresentations);
       setPresentationName('');
       setPresentationDescription('');
+      setThumbnail(null);
       handleCloseModal();
     } catch (error) {
       console.error('Error updating data store:', error);
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setThumbnail(reader.result);
+      };
     }
   };
 
@@ -263,6 +296,16 @@ function Dashboard() {
               aria-describedby="presentationDescriptionDesc"
             />
             <HiddenDescription id="presentationDescriptionDesc">Enter the presentation description</HiddenDescription>
+
+            <FormLabel htmlFor="presentation-thumbnail">Thumbnail:</FormLabel>
+            <FileInput
+              id="presentation-thumbnail"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              aria-describedby="presentationThumbnailDesc"
+            />
+            <HiddenDescription id="presentationDescriptionDesc">Upload a thumbnail image for your presentation</HiddenDescription>
 
             <SubmitButton type="submit" aria-label="Create presentation button">Create</SubmitButton>
           </form>
