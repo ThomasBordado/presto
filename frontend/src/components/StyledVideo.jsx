@@ -174,7 +174,7 @@ const StyledVideo = ({
         bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px', zIndex: zIndex + 1 },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px', zIndex: zIndex + 1 },
       } : {}}
-      style={{ zIndex: isSelected ? 999 : zIndex }}
+      style={{ zIndex: isSelected ? 500 : zIndex }}
     >
       <StyledVideoContainer
         ref={containerRef}
