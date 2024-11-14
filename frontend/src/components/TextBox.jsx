@@ -173,7 +173,7 @@ const TextBox = ({
         bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', left: '0px' },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '-4px', right: '-4px' },
       } : {}}
-      style={{ zIndex: isSelected ? 999 : zIndex }}
+      style={{ zIndex: isSelected ? 500 : zIndex }}
     >
       <TextBoxContainer
         ref={containerRef}
