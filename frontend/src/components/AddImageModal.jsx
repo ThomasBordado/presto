@@ -212,7 +212,7 @@ const AddImageModal = ({ isOpen, onClose, onSave, image }) => {
         </>
       )}
 
-      <SubmitButton onClick={image ? handleEditSave : handleAddSave}>
+      <SubmitButton aria-label="submit image" onClick={image ? handleEditSave : handleAddSave}>
         {image ? "Save Changes" : "Add Image"}
       </SubmitButton>
     </ModalMedium>

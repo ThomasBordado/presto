@@ -98,7 +98,7 @@ const SlideRearrangeModal = ({ slides, onClose, onRearrange }) => {
         <FormTitle id="rearrange-title">Rearrange Slides</FormTitle>
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={orderedSlides.map(slide => slide.id)}>
-            <SlideGrid>
+            <SlideGrid data-testid="slide-grid"> {/* Added data-testid here */}
               {orderedSlides.map((slide, index) => (
                 <SortableSlide key={slide.id} id={slide.id} index={index + 1} />
               ))}
@@ -119,7 +119,13 @@ const SortableSlide = ({ id, index }) => {
   };
 
   return (
-    <SlideBox ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <SlideBox
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      data-testid={`slide-box-${index}`}
+    >
       {index}
     </SlideBox>
   );

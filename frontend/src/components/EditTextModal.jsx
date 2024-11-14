@@ -157,7 +157,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
         <option value="Times New Roman">Times New Roman</option>
       </SelectField>
 
-      <SubmitButton onClick={handleSave}>Save Changes</SubmitButton>
+      <SubmitButton aria-label="save text box" onClick={handleSave}>Save Changes</SubmitButton>
     </ModalMedium>
   );
 };

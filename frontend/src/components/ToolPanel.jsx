@@ -66,16 +66,16 @@ const ToolPanel = ({ onAddText, onAddImage, onAddVideo, onAddCode }) => {
 
   return (
     <ToolContainer ref={panelRef}>
-      <ToggleButton onClick={togglePanel}>
+      <ToggleButton aria-label="tool pannel" onClick={togglePanel}>
         {isOpen ? 'Hide Tools' : 'Show Tools'}
       </ToggleButton>
 
       {isOpen && (
         <ToolPanelContainer>
-          <ToolButton onClick={onAddText}>Add Text Box</ToolButton>
-          <ToolButton onClick={onAddImage}>Add Image</ToolButton>
-          <ToolButton onClick={onAddVideo}>Add Video</ToolButton>
-          <ToolButton onClick={onAddCode}>Add Code</ToolButton>
+          <ToolButton aria-label="add text" onClick={onAddText}>Add Text Box</ToolButton>
+          <ToolButton aria-label="add image" onClick={onAddImage}>Add Image</ToolButton>
+          <ToolButton aria-label="add video" onClick={onAddVideo}>Add Video</ToolButton>
+          <ToolButton aria-label="add code" onClick={onAddCode}>Add Code</ToolButton>
         </ToolPanelContainer>
       )}
     </ToolContainer>

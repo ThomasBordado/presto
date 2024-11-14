@@ -1141,7 +1141,11 @@ const EditPresentation = () => {
             aria-labelledby="editBackgroundModalLabel"
           />
 
-          <SlideContainer ref={slideContainerRef} style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
+          <SlideContainer 
+            ref={slideContainerRef} 
+            data-testid="slide-container"
+            style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}
+          >
             {isRearrangeModalOpen && (
               <SlideRearrangeModal
                 slides={presentation.slides}

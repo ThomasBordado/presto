@@ -186,6 +186,7 @@ const TextBox = ({
           onDelete();
         }}
         onDoubleClick={() => onEdit()}
+        aria-label="Text Block"
       >
         {text}
       </TextBoxContainer>

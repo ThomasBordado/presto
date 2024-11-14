@@ -200,7 +200,7 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
         <option value="Times New Roman">Times New Roman</option>
       </SelectField>
 
-      <SubmitButton onClick={handleSave}>Add Text</SubmitButton>
+      <SubmitButton aria-label="submit text box" onClick={handleSave}>Add Text</SubmitButton>
     </ModalMedium>
   );
 };

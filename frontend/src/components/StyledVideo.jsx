@@ -185,6 +185,7 @@ const StyledVideo = ({
           onDelete();
         }}
         onDoubleClick={() => onEdit()}
+        aria-label="Video Block"
       >
         {React.cloneElement(children, { draggable: false, style: { pointerEvents: isSelected ? 'none' : 'auto' } })}
       </StyledVideoContainer>
