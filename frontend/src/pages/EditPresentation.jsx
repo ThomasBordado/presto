@@ -183,36 +183,47 @@ const ButtonContainer = styled.div`
 const ConfirmButton = styled.button`
   font-family: Arial, sans-serif;
   width: 100px;
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
   padding: 10px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #2196f3;
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
 
 const CancelButton = styled.button`
   font-family: Arial, sans-serif;
   width: 100px;
-  background-color: #f44336;
+  background-color: #b22222;
   color: white;
   padding: 10px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #f6656c;
+    background-color: #8B1A1A;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
+
 
 const EditPresentation = () => {
   const { id } = useParams();
