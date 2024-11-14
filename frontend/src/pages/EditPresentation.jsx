@@ -131,15 +131,23 @@ const InputField = styled.input`
   box-sizing: border-box;
 `;
 
-const ThumbnailField = styled.input`
+const FileInput = styled.input`
   width: 100%;
-  padding: 8px 8px 8px 1px;
+  padding: 8px;
   margin-top: 5px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
 `;
 
 const SaveButton = styled.button`
   width: 100%;
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
   padding: 10px;
   border: none;
@@ -147,9 +155,14 @@ const SaveButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
 
@@ -170,36 +183,47 @@ const ButtonContainer = styled.div`
 const ConfirmButton = styled.button`
   font-family: Arial, sans-serif;
   width: 100px;
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
   padding: 10px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #2196f3;
+    background-color: #004080;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
 
 const CancelButton = styled.button`
   font-family: Arial, sans-serif;
   width: 100px;
-  background-color: #f44336;
+  background-color: #b22222;
   color: white;
   padding: 10px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #f6656c;
+    background-color: #8B1A1A;
+  }
+
+  &:focus {
+    outline: 2px solid #ffffff;
   }
 `;
+
 
 const EditPresentation = () => {
   const { id } = useParams();
@@ -408,7 +432,9 @@ const EditPresentation = () => {
     return {};
   };
 
-  const handleTitleSave = async () => {
+  const handleTitleSave = async (e) => {
+    e.preventDefault();
+
     if (!newTitle.trim()) {
       showError('Title cannot be empty.');
       return;
@@ -966,56 +992,70 @@ const EditPresentation = () => {
 
   return (
     <Container>
-      <ErrorDisplay />
+      <ErrorDisplay aria-live="assertive" />
       {presentation ? (
         <div>
           <HeaderBar>
             <PresentationTitle>
               {presentation.name}
-              <IconButton onClick={openTitleEditModal} aria-label="Edit Presentation Title">
+              <IconButton
+                onClick={openTitleEditModal}
+                aria-label="Edit Presentation Title and Thumbnail"
+              >
                 <FaEdit />
               </IconButton>
             </PresentationTitle>
             <ButtonGroup>
-              <BackButton onClick={handleBack}>
+              <BackButton onClick={handleBack} aria-label="Go Back To Dashboard">
                 Back
               </BackButton>
-              <DeleteButton onClick={openDeleteModal} aria-label="delete presentation">
+              <DeleteButton onClick={openDeleteModal} aria-label="Delete Presentation">
                 Delete Presentation
               </DeleteButton>
-              <Logout aria-label="Logout of Presto" />
+              <Logout aria-label="Logout" />
             </ButtonGroup>
           </HeaderBar>
-          {/* Code to show thumbnail {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
 
           {isTitleEditModalOpen && (
-            <ModalMedium onClose={closeTitleEditModal}>
-              <ModalTitle>Edit Presentation Details</ModalTitle>
-              <FormLabel>Title:</FormLabel>
-              <InputField
-                type="text"
-                aria-label="Edit Title"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Enter presentation name"
-              />
-              <FormLabel>Thumbnail:</FormLabel>
-              <ThumbnailField
-                type="file"
-                aria-label="Edit Thumbnail"
-                accept="image/*"
-                onChange={handleThumbnailChange}
-              />
-              <SaveButton aria-label="Save Title" onClick={handleTitleSave}>Save</SaveButton>
+            <ModalMedium onClose={closeTitleEditModal} aria-labelledby="modal-title">
+              <ModalTitle id="modal-title">Edit Presentation Details</ModalTitle>
+              <form onSubmit={handleTitleSave} aria-label="Edit presentation title and thumbnail form">
+                <FormLabel htmlFor="editPresoEditTitle">Title:</FormLabel>
+                <InputField
+                  id="editPresoEditTitle"
+                  type="text"
+                  placeholder="Enter presentation name"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  aria-describedby="editPresoEditTitleDesc"
+                />
+                <HiddenDescription id="editPresoEditTitleDesc">Edit presentation title</HiddenDescription>
+
+                <FormLabel htmlFor="editPresoEditThumbnail">Thumbnail:</FormLabel>
+                <FileInput
+                  id="editPresoEditThumbnail"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
+                  aria-describedby="editPresoEditTitleDesc"
+                />
+                <HiddenDescription id="editPresoEditThumbnailDesc">Upload a new presentation thumbnail</HiddenDescription>
+
+                <SaveButton type="submit" aria-label="Save Title and Thumbnail">Save</SaveButton>
+              </form>
             </ModalMedium>
           )}
 
           {isDeleteModalOpen && (
-            <ModalSmall onClose={closeDeleteModal}>
-              <ModalText>Are you sure?</ModalText>
+            <ModalSmall onClose={closeDeleteModal} aria-labelledby="confirmPresentationDelete" aria-modal="true">
+              <ModalText id="confirmPresentationDelete">Are you sure?</ModalText>
               <ButtonContainer>
-                <ConfirmButton aria-label="approve delete" onClick={handleDelete}>Yes</ConfirmButton>
-                <CancelButton aria-label="reject delete" onClick={closeDeleteModal}>No</CancelButton>
+                <ConfirmButton onClick={handleDelete} aria-label="Confirm Deletion">
+                  Yes
+                </ConfirmButton>
+                <CancelButton onClick={closeDeleteModal} aria-label="Cancel Deletion">
+                  No
+                </CancelButton>
               </ButtonContainer>
             </ModalSmall>
           )}
@@ -1027,22 +1067,26 @@ const EditPresentation = () => {
             goToNextSlide={goToNextSlide}
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
+            aria-label={`Slide ${currentSlideIndex + 1} of ${presentation.slides.length}`}
           />
+
           <ToolPanel
             onAddText={openAddTextModal}
             onAddImage={openAddImageModal}
             onAddVideo={openAddVideoModal}
             onAddCode={openAddCodeModal}
+            aria-label="Add Content"
           />
-          <button onClick={openBackgroundModal}>Background Settings</button>
-          <button onClick={handlePreviewClick}>Preview</button>
-          <button onClick={openRearrangeModal}>Rearrange Slides</button>
 
+          <button onClick={openBackgroundModal} aria-label="Open Background Settings">Background Settings</button>
+          <button onClick={handlePreviewClick} aria-label="Preview Presentation">Preview</button>
+          <button onClick={openRearrangeModal} aria-label="Rearrange Slides">Rearrange Slides</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}
             onClose={closeAddTextModal}
             onSave={handleSaveTextBox}
+            aria-labelledby="addTextModalLabel"
           />
           <EditTextModal
             isOpen={isEditTextModalOpen}
@@ -1053,6 +1097,7 @@ const EditPresentation = () => {
                 ? presentation.slides[currentSlideIndex].textBoxes.find((box) => box.id === editingTextBoxIndex)
                 : null
             }
+            aria-labelledby="editTextModalLabel"
           />
           <AddImageModal
             isOpen={isAddImageModalOpen}
@@ -1063,6 +1108,7 @@ const EditPresentation = () => {
                 ? presentation.slides[currentSlideIndex].images.find((img) => img.id === editingImageIndex)
                 : null
             }
+            aria-labelledby="addImageModalLabel"
           />
           <AddVideoModal
             isOpen={isAddVideoModalOpen}
@@ -1071,7 +1117,9 @@ const EditPresentation = () => {
             video={
               editingVideoIndex !== null
                 ? presentation.slides[currentSlideIndex].videos.find((vid) => vid.id === editingVideoIndex)
-                : null}
+                : null
+            }
+            aria-labelledby="addVideoModalLabel"
           />
           <AddCodeModal
             isOpen={isAddCodeModalOpen}
@@ -1082,6 +1130,7 @@ const EditPresentation = () => {
                 ? presentation.slides[currentSlideIndex].codeBlocks.find((code) => code.id === editingCodeIndex)
                 : null
             }
+            aria-labelledby="addVideoModalLabel"
           />
           <BackgroundPickerModal
             isOpen={isPickerOpen}
@@ -1089,6 +1138,7 @@ const EditPresentation = () => {
             onSaveBackground={(background) => handleSaveBackground(background)}
             onSaveDefault={(background) => handleSaveDefault(background)}
             currentBackground={presentation.slides[currentSlideIndex].background || null}
+            aria-labelledby="editBackgroundModalLabel"
           />
 
           <SlideContainer ref={slideContainerRef} style={applyBackgroundStyle(presentation.slides[currentSlideIndex].background || presentation.default_background)}>
@@ -1112,6 +1162,7 @@ const EditPresentation = () => {
                 onEdit={() => openEditCodeModal(code.id)}
                 onChange={(newProps) => updateCode(code.id, { position: newProps.position, size: newProps.size })}
                 slideContainerRef={slideContainerRef}
+                aria-label={`Code Block in ${code.language}`}
               />
             ))}
             {presentation.slides[currentSlideIndex]?.videos?.map((video) => (
@@ -1124,6 +1175,7 @@ const EditPresentation = () => {
                 onEdit={() => openEditVideoModal(video.id)}
                 onChange={(newProps) => updateVideo(video.id, { position: newProps.position, size: newProps.size })}
                 slideContainerRef={slideContainerRef}
+                aria-label="Video Block"
               >
                 <iframe
                   width="100%"
@@ -1147,6 +1199,7 @@ const EditPresentation = () => {
                 onEdit={() => openEditImageModal(img.id)}
                 onChange={(newProps) => updateImage(img.id, { position: newProps.position, size: newProps.size })}
                 slideContainerRef={slideContainerRef}
+                aria-label="Image Block"
               />
             ))}
             {presentation.slides[currentSlideIndex]?.textBoxes?.map((box) => (
@@ -1163,6 +1216,7 @@ const EditPresentation = () => {
                 onEdit={() => openEditTextModal(box.id)}
                 onChange={(newProps) => updateTextBox(box.id, { position: newProps.position, size: newProps.size })}
                 slideContainerRef={slideContainerRef}
+                aria-label="Text Block"
               />
             ))}
             <SlideNumber currentSlideIndex={currentSlideIndex} />
