@@ -54,21 +54,22 @@ describe('Logout Component', () => {
 
   // Mock the case where getToken returns null
   it('handles missing token by showing an error and preventing API call', async () => {
-    
     getToken.mockReturnValue(null);
-    console.error = vi.fn();
 
-    console.log(getToken);
-
+    // Used this to supress errors in console.
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  
     renderWithRouter(<Logout />);
     const button = screen.getByRole('button', { name: /logout/i });
     fireEvent.click(button);
-
-    // Ensure no API call is made and the thrown error is caught
+  
+    // Ensure no API call is made and the expected error message is logged
     await waitFor(() => {
       expect(axios.post).not.toHaveBeenCalled();
-      expect(console.error).toHaveBeenCalledWith('Error logging out:', 'No authentication token found');
+      expect(consoleSpy).toHaveBeenCalledWith('Error logging out:', 'No authentication token found');
     });
+  
+    consoleSpy.mockRestore();
   });
 
     // Mock the token and simulate an API failure

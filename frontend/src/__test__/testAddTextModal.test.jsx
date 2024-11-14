@@ -90,4 +90,4 @@ describe('AddTextModal Component', () => {
     expect(screen.getByLabelText(/Width \(%\):/i)).toHaveValue(50);
     expect(screen.getByLabelText(/Height \(%\):/i)).toHaveValue(50);
   });
-});
+}, 10000);

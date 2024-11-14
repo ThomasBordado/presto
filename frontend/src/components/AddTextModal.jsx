@@ -53,32 +53,32 @@ const AddTextModal = ({ isOpen, onClose, onSave }) => {
       <h3>Add Text Box</h3>
 
       <FormField>
-        <label for="contentInput">Text Content:</label>
+        <label htmlFor="contentInput">Text Content:</label>
         <input id="contentInput" type="text" ref={textRef} />
       </FormField>
 
       <FormField>
-        <label for="fontSizeInput">Font Size (em):</label>
+        <label htmlFor="fontSizeInput">Font Size (em):</label>
         <input id="fontSizeInput" type="number" step="0.1" ref={fontSizeRef} defaultValue={1} />
       </FormField>
 
       <FormField>
-        <label for="colourInput">Text Color (Hex or Colour):</label>
+        <label htmlFor="colourInput">Text Color (Hex or Colour):</label>
         <input id="colourInput" type="text" ref={colorRef} defaultValue={'black'} />
       </FormField>
 
       <FormField>
-        <label for="widthInput">Width (%):</label>
+        <label htmlFor="widthInput">Width (%):</label>
         <input id="widthInput" type="number" ref={widthRef} defaultValue={50} />
       </FormField>
 
       <FormField>
-        <label for="heightInput">Height (%):</label>
+        <label htmlFor="heightInput">Height (%):</label>
         <input id="heightInput" type="number" ref={heightRef} defaultValue={50} />
       </FormField>
 
       <FormField>
-        <label for="fontFamilyInput">Font Family:</label>
+        <label htmlFor="fontFamilyInput">Font Family:</label>
         <select id="fontFamilyInput" ref={fontFamilyRef}>
           <option value="Arial">Arial</option>
           <option value="Courier New">Courier New</option>
