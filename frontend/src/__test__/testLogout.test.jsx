@@ -19,7 +19,7 @@ afterEach(() => {
     vi.clearAllMocks();
   });
 
-describe.skip('Logout Component', () => {
+describe('Logout Component', () => {
   
     // Check that the component renders with the expected button
   it('renders the Logout button', () => {
