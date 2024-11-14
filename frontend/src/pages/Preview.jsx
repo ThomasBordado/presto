@@ -30,7 +30,7 @@ const Preview = () => {
       }
 
       try {
-        const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+        const response = await axios.get(`${config.BACKEND_URL}/store`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const store = response.data.store;

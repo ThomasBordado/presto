@@ -246,7 +246,7 @@ const EditPresentation = () => {
       }
 
       try {
-        const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+        const response = await axios.get(`${config.BACKEND_URL}/store`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const store = response.data.store;
@@ -289,7 +289,7 @@ const EditPresentation = () => {
     }
 
     try {
-      const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+      const response = await axios.get(`${config.BACKEND_URL}/store`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const store = response.data.store;
@@ -300,7 +300,7 @@ const EditPresentation = () => {
       );
 
       await axios.put(
-        `https://presto-deploy-backend-zeta.vercel.app/store`,
+        `${config.BACKEND_URL}/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -369,7 +369,7 @@ const EditPresentation = () => {
     try {
       const updatedPresentation = { ...presentation, default_background: background };
 
-      const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+      const response = await axios.get(`${config.BACKEND_URL}/store`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const store = response.data.store;
@@ -380,7 +380,7 @@ const EditPresentation = () => {
       );
 
       await axios.put(
-        `https://presto-deploy-backend-zeta.vercel.app/store`,
+        `${config.BACKEND_URL}/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -425,7 +425,7 @@ const EditPresentation = () => {
     try {
       const updatedPresentation = { ...presentation, name: newTitle };
 
-      const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+      const response = await axios.get(`${config.BACKEND_URL}/store`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const store = response.data.store;
@@ -436,7 +436,7 @@ const EditPresentation = () => {
       );
 
       await axios.put(
-        `https://presto-deploy-backend-zeta.vercel.app/store`,
+        `${config.BACKEND_URL}/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -461,7 +461,7 @@ const EditPresentation = () => {
 
         const updatedPresentation = { ...presentation, thumbnail: reader.result };
 
-        const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+        const response = await axios.get(`${config.BACKEND_URL}/store`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const store = response.data.store;
@@ -472,7 +472,7 @@ const EditPresentation = () => {
         );
 
         await axios.put(
-          `https://presto-deploy-backend-zeta.vercel.app/store`,
+          `${config.BACKEND_URL}/store`,
           { store: { presentations: updatedPresentations } },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -534,7 +534,7 @@ const EditPresentation = () => {
     try {
       const updatedPresentation = { ...presentation, slides: updatedSlides };
 
-      const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
+      const response = await axios.get(`${config.BACKEND_URL}/store`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const store = response.data.store;
@@ -545,7 +545,7 @@ const EditPresentation = () => {
       );
 
       await axios.put(
-        `https://presto-deploy-backend-zeta.vercel.app/store`,
+        `${config.BACKEND_URL}/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );
