@@ -11,9 +11,26 @@ const Container = styled.div`
   background-image: url(${backgroundImage});
   background-size: cover;
   background-position: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+
+  > * {
+    position: relative;
+    z-index: 2;
+  }
 `;
 
-const Navbar = styled.div`
+const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,7 +47,7 @@ const Title = styled.h1`
   margin: 0;
 `;
 
-const NavLinks = styled.div`
+const NavLinks = styled.nav`
   display: flex;
   gap: 15px;
 
@@ -47,23 +64,29 @@ const NavLinks = styled.div`
       background-color: rgba(255, 255, 255, 0.1);
       text-decoration: underline;
     }
+
+    &:focus {
+      outline: 2px solid #ffffff;
+    }
   }
 
-  a.register {
-    background-color: white;
-    color: #333;
+  .register {
+    background-color: #007bff;
+    color: white;
     padding: 8px 16px;
-    font-weight: bold;
-    border: 1px solid #ddd;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #f0f0f0;
+      background-color: #0056b3;
+    }
+
+    &:focus {
+      outline: 2px solid #333;
     }
   }
 `;
 
-const PageText = styled.div`
+const MainContent = styled.main`
   text-align: center;
   margin-top: 70px;
   color: #007bff;
@@ -73,17 +96,17 @@ const PageText = styled.div`
 
 function LandingPage() {
   return (
-    <Container>
-      <Navbar>
+    <Container aria-label="Landing page with login and register options">
+      <Header>
         <Title>Presto</Title>
-        <NavLinks>
-          <Link to="/login">Login</Link>
-          <Link to="/register" className="register">Register</Link>
+        <NavLinks aria-label="Primary navigation">
+          <Link to="/login" aria-label="Login to Presto">Login</Link>
+          <Link to="/register" className="register" aria-label="Register for Presto">Register</Link>
         </NavLinks>
-      </Navbar>
-      <PageText>
+      </Header>
+      <MainContent>
         <h2>Make Better Presentations</h2>
-      </PageText>
+      </MainContent>
     </Container>
   );
 }
