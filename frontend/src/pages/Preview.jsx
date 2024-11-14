@@ -194,7 +194,6 @@ const Preview = () => {
     <div
       key={textBox.id}
       aria-label={`Text box: ${textBox.text}`}
-      tabIndex={0}
       style={{
         position: 'absolute',
         left: `${textBox.position.x}%`,
@@ -216,7 +215,6 @@ const Preview = () => {
       key={image.id}
       src={image.src}
       alt={image.description || 'Image'}
-      tabIndex={0}
       style={{
         position: 'absolute',
         left: `${image.position.x}%`,
@@ -250,7 +248,6 @@ const Preview = () => {
   const renderCode = (code) => (
     <div
       key={code.id}
-      tabIndex={0}
       aria-label={`Code block: ${code.language}`}
       style={{
         position: 'absolute',
