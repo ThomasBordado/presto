@@ -175,7 +175,9 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
         aria-required="true"
         aria-describedby="codeContentDesc"
       />
-      <HiddenDescription id="codeContentDesc">Enter your code. Use "Tab" for indentation inside the text area.</HiddenDescription>
+      <HiddenDescription id="codeContentDesc">
+        Enter your code. Use &quot;Tab&quot; for indentation inside the text area.
+      </HiddenDescription>
 
       <FormLabel htmlFor="codeFontSize">Font Size (em):</FormLabel>
       <InputField

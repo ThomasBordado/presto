@@ -209,13 +209,6 @@ function Dashboard() {
 
     let thumbnailURL = thumbnail;
 
-    if (thumbnail instanceof File) {
-      thumbnailURL = await uploadThumbnail(thumbnail);
-      if (!thumbnailURL) {
-        return showError('Failed to upload thumbnail.');
-      }
-    }
-
     const newPresentation = {
       id: uuidv4(),
       name: presentationName,
