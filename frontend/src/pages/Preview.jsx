@@ -3,9 +3,78 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../backend.config.json';
 import { getToken } from '../Auth';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { motion, AnimatePresence } from 'framer-motion';
+import styled from 'styled-components';
+
+const SlideContainer = styled.div`
+  position: relative;
+  height: 100vh;
+  margin: -8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const NavigationButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: Arial, sans-serif;
+  font-size: 1em;
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 500;
+  transition: background-color 0.3s ease;
+
+  &:focus {
+    outline: 2px solid white;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+`;
+
+const SlideInfo = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-family: Arial, sans-serif;
+  font-size: 1em;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+`;
+
+const SlideContent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Preview = () => {
   const { id } = useParams();
@@ -217,7 +286,7 @@ const Preview = () => {
   };
 
   return (
-    <div style={{ position: 'relative', height: '100vh', margin: '-8px', ...getBackgroundStyle() }}>
+    <SlideContainer style={getBackgroundStyle()}>
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentSlide}
@@ -229,30 +298,31 @@ const Preview = () => {
           transition={{ duration: 0.5 }}
           style={{ position: 'absolute', width: '100%', height: '100%' }}
         >
-          <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <SlideContent>
             {presentation.slides[currentSlide].textBoxes?.map(renderTextBox)}
             {presentation.slides[currentSlide].images?.map(renderImage)}
             {presentation.slides[currentSlide].videos?.map(renderVideo)}
             {presentation.slides[currentSlide].codeBlocks?.map(renderCode)}
-          </div>
+          </SlideContent>
         </motion.div>
       </AnimatePresence>
-      <button
-        style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', zIndex: '999' }}
-        onClick={goToPreviousSlide}
-      >
-        ←
-      </button>
-      <button
-        style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', zIndex: '999' }}
-        onClick={goToNextSlide}
-      >
-        →
-      </button>
-      <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', color: 'white' }}>
-        Slide {currentSlide + 1} / {presentation.slides.length}
-      </div>
-    </div>
+
+      {currentSlide > 0 && (
+        <NavigationButton onClick={goToPreviousSlide} style={{ left: 10 }} aria-label="Previous Slide">
+          <FiChevronLeft />
+        </NavigationButton>
+      )}
+
+      {presentation && currentSlide < presentation.slides.length - 1 && (
+        <NavigationButton onClick={goToNextSlide} style={{ right: 10 }} aria-label="Next Slide">
+          <FiChevronRight />
+        </NavigationButton>
+      )}
+
+      <SlideInfo aria-live="polite">
+        {currentSlide + 1} / {presentation.slides.length}
+      </SlideInfo>
+    </SlideContainer>
   );
 };
 
