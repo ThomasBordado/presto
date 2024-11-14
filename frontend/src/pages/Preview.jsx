@@ -30,7 +30,7 @@ const Preview = () => {
       }
 
       try {
-        const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+        const response = await axios.get(`${config.BACKEND_LOCAL}/store`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const store = response.data.store;

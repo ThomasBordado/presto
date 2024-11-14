@@ -36,7 +36,7 @@ function Logout() {
         throw new Error('No authentication token found');
       }
 
-      await axios.post(`http://localhost:${config.BACKEND_PORT}/admin/auth/logout`, {}, {
+      await axios.post(`${config.BACKEND_LOCAL}/admin/auth/logout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       removeToken();

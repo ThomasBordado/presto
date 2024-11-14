@@ -5,22 +5,22 @@ import styled from 'styled-components';
 const StyledVideoContainer = styled.div`
   width: 100%;
   height: 100%;
-  cursor: ${(props) => (props.isSelected ? 'move' : 'pointer')};
-  border: ${(props) => (props.isSelected ? '3px solid red' : '3px solid transparent')};
+  cursor: ${(props) => (props.$isSelected ? 'move' : 'pointer')};
+  border: ${(props) => (props.$isSelected ? '3px solid red' : '3px solid transparent')};
   &:hover {
-    border-color: ${(props) => (props.isSelected ? 'red' : 'red')};
+    border-color: ${(props) => (props.$isSelected ? 'red' : 'red')};
   }
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   position: relative;
+  
   iframe {
-    width: calc(100%);
-    height: calc(100%); 
+    width: 100%;
+    height: 100%;
     border: none;
   }
-
 `;
 
 const StyledVideo = ({
@@ -57,6 +57,7 @@ const StyledVideo = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
 
   useEffect(() => {
     if (slideContainerRef?.current) {
@@ -132,8 +133,8 @@ const StyledVideo = ({
       size={currentSize}
       position={currentPosition}
       onDragStop={(e, d) => {
-        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width - 5));
-        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height - 5));
+        const constrainedX = Math.max(0, Math.min(d.x, slideContainerRef.current.offsetWidth - currentSize.width - 2));
+        const constrainedY = Math.max(0, Math.min(d.y, slideContainerRef.current.offsetHeight - currentSize.height - 2));
 
         const newPosition = convertPositionToPercentage(constrainedX, constrainedY);
 
@@ -142,8 +143,8 @@ const StyledVideo = ({
         onChange({ size: newSize, position: newPosition });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
-        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x - 5);
-        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y - 5);
+        const constrainedWidth = Math.min(ref.offsetWidth, slideContainerRef.current.offsetWidth - position.x - 2);
+        const constrainedHeight = Math.min(ref.offsetHeight, slideContainerRef.current.offsetHeight - position.y - 2);
 
         const newSize = convertSizeToPercentage(constrainedWidth, constrainedHeight);
         const newPosition = convertPositionToPercentage(position.x, position.y);
@@ -173,13 +174,11 @@ const StyledVideo = ({
         bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px', zIndex: zIndex + 1 },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px', zIndex: zIndex + 1 },
       } : {}}
-      style={{ zIndex }}
+      style={{ zIndex: isSelected ? 999 : zIndex }}
     >
       <StyledVideoContainer
         ref={containerRef}
-        $size={size}
-        $zIndex={zIndex}
-        isSelected={isSelected}
+        $isSelected={isSelected}
         onClick={handleClickInside}
         onContextMenu={(e) => {
           e.preventDefault();

@@ -57,7 +57,7 @@ const EditTextModal = ({ isOpen, onClose, onSave, textBox }) => {
       </FormField>
 
       <FormField>
-        <label>Text Color (Hex):</label>
+        <label>Text Color (Hex or Colour):</label>
         <input type="text" ref={colorRef} />
       </FormField>
 
