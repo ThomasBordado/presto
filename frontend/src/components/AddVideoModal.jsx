@@ -150,7 +150,7 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
 
       <FormLabel htmlFor="videoURL">YouTube Video URL:</FormLabel>
       <InputField
-        id="video-url"
+        id="videoURL"
         type="text"
         placeholder="Enter video URL"
         ref={urlRef}
