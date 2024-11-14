@@ -204,7 +204,7 @@ const AddCodeModal = ({ isOpen, onClose, onSave, code }) => {
 
           <FormLabel htmlFor="codeHeight">Height (%):</FormLabel>
           <InputField
-            id="height"
+            id="codeHeight"
             type="number"
             placeholder="Enter a code box height"
             ref={heightRef}
