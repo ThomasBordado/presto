@@ -23,14 +23,14 @@ const SlideControl = ({
 }) => {
   return (
     <SlideControlsWrapper>
-      <button onClick={goToPreviousSlide} disabled={currentSlideIndex === 0}>
+      <button aria-label="previous slide" onClick={goToPreviousSlide} disabled={currentSlideIndex === 0}>
         ←
       </button>
       <CreateDeleteContainer>
-        <button onClick={handleCreateSlide}>Add Slide</button>
-        <button onClick={handleDeleteSlide}>Delete Slide</button>
+        <button aria-label="add slide" onClick={handleCreateSlide}>Add Slide</button>
+        <button aria-label="delete slide" onClick={handleDeleteSlide}>Delete Slide</button>
       </CreateDeleteContainer>
-      <button onClick={goToNextSlide} disabled={currentSlideIndex === totalSlides - 1}>
+      <button aria-label="next slide" onClick={goToNextSlide} disabled={currentSlideIndex === totalSlides - 1}>
         →
       </button>
     </SlideControlsWrapper>

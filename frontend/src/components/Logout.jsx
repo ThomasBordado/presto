@@ -46,7 +46,7 @@ function Logout() {
     }
   };
 
-  return <LogoutButton onClick={handleLogout}>Logout</LogoutButton>;
+  return <LogoutButton aria-label="Logout of Presto" onClick={handleLogout}>Logout</LogoutButton>;
 }
 
 export default Logout;

@@ -972,7 +972,7 @@ const EditPresentation = () => {
           <HeaderBar>
             <PresentationTitle>
               {presentation.name}
-              <IconButton onClick={openTitleEditModal}>
+              <IconButton onClick={openTitleEditModal} aria-label="Edit Presentation Title">
                 <FaEdit />
               </IconButton>
             </PresentationTitle>
@@ -980,10 +980,10 @@ const EditPresentation = () => {
               <BackButton onClick={handleBack}>
                 Back
               </BackButton>
-              <DeleteButton onClick={openDeleteModal}>
+              <DeleteButton onClick={openDeleteModal} aria-label="delete presentation">
                 Delete Presentation
               </DeleteButton>
-              <Logout />
+              <Logout aria-label="Logout of Presto" />
             </ButtonGroup>
           </HeaderBar>
           {/* Code to show thumbnail {thumbnail && <img src={thumbnail} alt="Thumbnail" />} */}
@@ -994,6 +994,7 @@ const EditPresentation = () => {
               <FormLabel>Title:</FormLabel>
               <InputField
                 type="text"
+                aria-label="Edit Title"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Enter presentation name"
@@ -1001,10 +1002,11 @@ const EditPresentation = () => {
               <FormLabel>Thumbnail:</FormLabel>
               <ThumbnailField
                 type="file"
+                aria-label="Edit Thumbnail"
                 accept="image/*"
                 onChange={handleThumbnailChange}
               />
-              <SaveButton onClick={handleTitleSave}>Save</SaveButton>
+              <SaveButton aria-label="Save Title" onClick={handleTitleSave}>Save</SaveButton>
             </ModalMedium>
           )}
 
@@ -1012,8 +1014,8 @@ const EditPresentation = () => {
             <ModalSmall onClose={closeDeleteModal}>
               <ModalText>Are you sure?</ModalText>
               <ButtonContainer>
-                <ConfirmButton onClick={handleDelete}>Yes</ConfirmButton>
-                <CancelButton onClick={closeDeleteModal}>No</CancelButton>
+                <ConfirmButton aria-label="approve delete" onClick={handleDelete}>Yes</ConfirmButton>
+                <CancelButton aria-label="reject delete" onClick={closeDeleteModal}>No</CancelButton>
               </ButtonContainer>
             </ModalSmall>
           )}

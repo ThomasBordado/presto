@@ -20,7 +20,7 @@ const SlideNumberStyle = styled.div`
 
 const SlideNumber = ({ currentSlideIndex }) => {
   return (
-    <SlideNumberStyle>
+    <SlideNumberStyle aria-label="slide number">
       <div>{currentSlideIndex + 1}</div>
     </SlideNumberStyle>
   );
