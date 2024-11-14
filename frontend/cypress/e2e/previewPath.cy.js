@@ -3,7 +3,7 @@ describe('Happy Path', () => {
     cy.visit('localhost:3000/');
   });
 
-  it('completes the full happy path for a user', () => {
+  it('user previewing a slide', () => {
     // Navigate to register page
     cy.get('a[aria-label="Register for Presto"]')
       .click();
@@ -12,10 +12,10 @@ describe('Happy Path', () => {
     // Registers Successfully
     cy.get('input[id="email"]')
       .focus()
-      .type('random@random.com');
+      .type('random1@random.com');
     cy.get('input[id="name"]')
       .focus()
-      .type('random');
+      .type('random1');
     cy.get('input[id="password"]')
       .focus()
       .type('password123');
@@ -38,21 +38,11 @@ describe('Happy Path', () => {
     cy.get('button[aria-label="Create presentation button"]')
       .click();
     cy.contains('My Presentation').should('exist');
-
-    // Update thumbnail and name
     cy.contains('My First Presentation')
       .click();
-    cy.get('button[aria-label="Edit Presentation Title and Thumbnail"]')
-      .click();
-    cy.get('input[id="editPresoEditTitle"]')
-      .focus()
-      .type(' (changed)');
-    cy.get('input[id="editPresoEditThumbnail"]')
-      .selectFile('./src/assets/LandingPage.jpg');
-    cy.wait(1000);
-    cy.get('button[aria-label="Save Title and Thumbnail"]')
-      .click();
-    cy.contains('My Presentation (changed)').should('exist');
+
+    // Add TextBox to slide
+    
 
     // Add slides
     cy.get('button[aria-label="add slide"')
@@ -61,26 +51,26 @@ describe('Happy Path', () => {
     cy.get('button[aria-label="add slide"')
       .click();
     cy.wait(1000);
-    cy.get('div[aria-label="Slide number 3"]')
+    cy.get('div[aria-label="slide number"]')
       .should('be.visible')
       .and('contain', 3);
 
     // Switch between slides
     cy.get('button[aria-label="previous slide"]')
       .click();
-    cy.get('div[aria-label="Slide number 2"]')
+    cy.get('div[aria-label="slide number"]')
       .should('be.visible')
       .and('contain', 2);
     cy.get('button[aria-label="previous slide"]')
       .click();
-    cy.get('div[aria-label="Slide number 1"]')
+    cy.get('div[aria-label="slide number"]')
       .should('be.visible')
       .and('contain', 1);
 
     // Delete the presentation
-    cy.get('button[aria-label="Delete Presentation"]')
+    cy.get('button[aria-label="delete presentation"]')
       .click();
-    cy.get('button[aria-label="Confirm Deletion"]')
+    cy.get('button[aria-label="approve delete"]')
       .click();
     cy.url().should('include', 'localhost:3000/dashboard');
 

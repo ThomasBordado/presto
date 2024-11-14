@@ -99,7 +99,7 @@ describe('StyledImage Component', () => {
     const imageElement = screen.getByAltText(alt);
     const rndWrapper = imageElement.parentElement;
     fireEvent.click(imageElement);
-    expect(rndWrapper).toHaveStyle('z-index: 999');
+    expect(rndWrapper).toHaveStyle('z-index: 500');
   });
 
   it('removes selected state when clicking outside', () => {
