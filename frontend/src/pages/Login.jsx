@@ -25,7 +25,7 @@ const LoginBox = styled.div`
   text-align: center;
 `;
 
-const Title = styled.h2`
+const FormTitle = styled.h2`
   margin: 0;
   font-family: Arial, sans-serif;
   font-size: 24px;
@@ -49,6 +49,15 @@ const InputField = styled.input`
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+
+  &:focus {
+    outline: 2px solid #0056b3;
+  }
+`;
+
+const HiddenDescription = styled.p`
+  visibility: hidden;
+  position: absolute;
 `;
 
 const SubmitButton = styled.button`
@@ -61,9 +70,13 @@ const SubmitButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: #0056b3;
+  }
+
+  &:focus {
+    outline: 2px solid #0056b3;
   }
 `;
 
@@ -103,22 +116,36 @@ function Login() {
   return (
     <Container>
       <LoginBox>
-        <Title>Login</Title>
-        <ErrorDisplay />
-        <form onSubmit={handleSubmit}>
-          <FormLabel>Email:</FormLabel>
+        <FormTitle>Login</FormTitle>
+        <ErrorDisplay aria-live="assertive" />
+        <form onSubmit={handleSubmit} aria-label="Login form">
+          <FormLabel htmlFor="email">Email:</FormLabel>
           <InputField
+            id="email"
             type="email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-required="true"
+            aria-describedby="emailDesc"
+            autoComplete="email"
           />
-          <FormLabel>Password:</FormLabel>
+          <HiddenDescription id="emailDesc">Enter your email address</HiddenDescription>
+
+          <FormLabel htmlFor="password">Password:</FormLabel>
           <InputField
+            id="password"
             type="password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-required="true"
+            aria-describedby="passwordDesc"
+            autoComplete="current-password"
           />
-          <SubmitButton type="submit">Login</SubmitButton>
+          <HiddenDescription id="passwordDesc">Enter your password</HiddenDescription>
+
+          <SubmitButton type="submit" aria-label="Login button">Login</SubmitButton>
         </form>
         <FooterText>
           Don&apos;t have an account? <Link to="/register">Sign up</Link>
