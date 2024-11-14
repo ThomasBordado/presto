@@ -98,7 +98,7 @@ function Register() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:${config.BACKEND_PORT}/admin/auth/register`, { email, password, name });
+      const response = await axios.post(`https://presto-deploy-backend-zeta.vercel.app/admin/auth/register`, { email, password, name });
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {

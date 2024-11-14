@@ -136,7 +136,7 @@ function Dashboard() {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await axios.get(`http://localhost:${config.BACKEND_PORT}/store`, {
+      const response = await axios.get(`https://presto-deploy-backend-zeta.vercel.app/store`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const store = response.data.store;
@@ -188,7 +188,7 @@ function Dashboard() {
     try {
       const updatedPresentations = [newPresentation, ...presentations];
       await axios.put(
-        `http://localhost:${config.BACKEND_PORT}/store`,
+        `https://presto-deploy-backend-zeta.vercel.app/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );

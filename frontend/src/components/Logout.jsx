@@ -31,7 +31,7 @@ function Logout() {
         throw new Error('No authentication token found');
       }
 
-      await axios.post(`http://localhost:${config.BACKEND_PORT}/admin/auth/logout`, {}, {
+      await axios.post(`https://presto-deploy-backend-zeta.vercel.app/admin/auth/logout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       removeToken();

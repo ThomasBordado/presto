@@ -92,7 +92,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`http://localhost:${config.BACKEND_PORT}/admin/auth/login`, { email, password });
+      const response = await axios.post(`https://presto-deploy-backend-zeta.vercel.app/admin/auth/login`, { email, password });
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {
