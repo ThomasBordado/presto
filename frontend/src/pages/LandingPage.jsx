@@ -101,7 +101,7 @@ function LandingPage() {
         <Title>Presto</Title>
         <NavLinks aria-label="Primary navigation">
           <Link to="/login" aria-label="Login to Presto">Login</Link>
-          <Link to="/register" className="register" aria-label="Register for Presto">Register</Link>
+          <Link name="register-button" to="/register" className="register" aria-label="Register for Presto">Register</Link>
         </NavLinks>
       </Header>
       <MainContent>

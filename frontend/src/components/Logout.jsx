@@ -42,11 +42,11 @@ function Logout() {
       removeToken();
       navigate('/');
     } catch (error) {
-      console.error('Error logging out:', error.response.data.error);
+      console.error('Error logging out:', error.message);
     }
   };
 
-  return <LogoutButton onClick={handleLogout}>Logout</LogoutButton>;
+  return <LogoutButton aria-label="Logout of Presto" onClick={handleLogout}>Logout</LogoutButton>;
 }
 
 export default Logout;

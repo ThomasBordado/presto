@@ -197,7 +197,7 @@ const AddVideoModal = ({ isOpen, onClose, onSave, video }) => {
         Auto-play
       </FormLabel>
 
-      <SubmitButton onClick={video ? handleEditSave : handleAddSave}>
+      <SubmitButton aria-label="submit video" onClick={video ? handleEditSave : handleAddSave}>
         {video ? "Save Changes" : "Add Video"}
       </SubmitButton>
     </ModalMedium>

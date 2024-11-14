@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 
 const Overlay = styled.div`
@@ -38,15 +39,16 @@ const CloseButton = styled.button`
   }
 `;
 
-function ModalMedium({ onClose, children }) {
-  return (
-    <Overlay>
-      <Content>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
-        {children}
-      </Content>
-    </Overlay>
-  );
-}
+const ModalMedium = forwardRef(({ onClose, children }, ref) => (
+  <Overlay ref={ref}>
+    <Content>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
+      {children}
+    </Content>
+  </Overlay>
+));
+
+// Add displayName to the component
+ModalMedium.displayName = 'ModalMedium';
 
 export default ModalMedium;

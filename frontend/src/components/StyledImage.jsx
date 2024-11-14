@@ -175,6 +175,7 @@ const StyledImage = ({
         }}
         onDoubleClick={() => onEdit()}
         draggable={false}
+        aria-label="Image Block"
       >
       </ImageContainer>
     </Rnd>
