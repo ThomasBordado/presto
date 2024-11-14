@@ -162,7 +162,7 @@ const StyledImage = ({
         bottomLeft: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', left: '0px' },
         bottomRight: { width: '5px', height: '5px', backgroundColor: 'black', bottom: '0px', right: '0px' },
       } : {}}
-      style={{ zIndex: isSelected ? 999 : zIndex }}
+      style={{ zIndex: isSelected ? 500 : zIndex }}
     >
       <ImageContainer
         ref={containerRef}
