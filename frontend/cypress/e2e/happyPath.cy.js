@@ -1,107 +1,107 @@
-describe('Happy Path', () => {
-  before(() => {
-    cy.visit('localhost:3000/');
+window.describe('Happy Path', () => {
+  window.before(() => {
+    window.cy.visit('localhost:3000/');
   });
 
-  it('completes the full happy path for a user', () => {
+  window.it('completes the full happy path for a user', () => {
     // Navigate to register page
-    cy.get('a[aria-label="Register for Presto"]')
+    window.cy.get('a[aria-label="Register for Presto"]')
       .click();
-    cy.url().should('include', 'localhost:3000/register');
+    window.cy.url().should('include', 'localhost:3000/register');
 
     // Registers Successfully
-    cy.get('input[id="email"]')
+    window.cy.get('input[id="email"]')
       .focus()
       .type('random@random.com');
-    cy.get('input[id="name"]')
+    window.cy.get('input[id="name"]')
       .focus()
       .type('random');
-    cy.get('input[id="password"]')
+    window.cy.get('input[id="password"]')
       .focus()
       .type('password123');
-    cy.get('input[id="confirmPassword"]')
+    window.cy.get('input[id="confirmPassword"]')
       .focus()
       .type('password123');
-    cy.get('button[aria-label="Register button"]')
+    window.cy.get('button[aria-label="Register button"]')
       .click();
-    cy.url().should('include', 'localhost:3000/dashboard');
+    window.cy.url().should('include', 'localhost:3000/dashboard');
 
     // Creates a new presentation successfully
-    cy.get('button[aria-label="Create new presentation button"]')
+    window.cy.get('button[aria-label="Create new presentation button"]')
       .click();
-    cy.get('input[id="presentation-title"]')
+    window.cy.get('input[id="presentation-title"]')
       .focus()
       .type('My Presentation');
-    cy.get('input[id="presentation-description"]')
+    window.cy.get('input[id="presentation-description"]')
       .focus()
       .type('My First Presentation');
-    cy.get('button[aria-label="Create presentation button"]')
+    window.cy.get('button[aria-label="Create presentation button"]')
       .click();
-    cy.contains('My Presentation').should('exist');
+    window.cy.contains('My Presentation').should('exist');
 
     // Update thumbnail and name
-    cy.contains('My First Presentation')
+    window.cy.contains('My First Presentation')
       .click();
-    cy.get('button[aria-label="Edit Presentation Title and Thumbnail"]')
+    window.cy.get('button[aria-label="Edit Presentation Title and Thumbnail"]')
       .click();
-    cy.get('input[id="editPresoEditTitle"]')
+    window.cy.get('input[id="editPresoEditTitle"]')
       .focus()
       .type(' (changed)');
-    cy.get('input[id="editPresoEditThumbnail"]')
+    window.cy.get('input[id="editPresoEditThumbnail"]')
       .selectFile('./src/assets/LandingPage.jpg');
-    cy.wait(1000);
-    cy.get('button[aria-label="Save Title and Thumbnail"]')
+    window.cy.wait(1000);
+    window.cy.get('button[aria-label="Save Title and Thumbnail"]')
       .click();
-    cy.contains('My Presentation (changed)').should('exist');
+    window.cy.contains('My Presentation (changed)').should('exist');
 
     // Add slides
-    cy.get('button[aria-label="add slide"')
+    window.cy.get('button[aria-label="add slide"')
       .click();
-    cy.wait(1000);
-    cy.get('button[aria-label="add slide"')
+    window.cy.wait(1000);
+    window.cy.get('button[aria-label="add slide"')
       .click();
-    cy.wait(1000);
-    cy.get('div[aria-label="Slide number 3"]')
+    window.cy.wait(1000);
+    window.cy.get('div[aria-label="Slide number 3"]')
       .should('be.visible')
       .and('contain', 3);
 
     // Switch between slides
-    cy.get('button[aria-label="previous slide"]')
+    window.cy.get('button[aria-label="previous slide"]')
       .click();
-    cy.get('div[aria-label="Slide number 2"]')
+    window.cy.get('div[aria-label="Slide number 2"]')
       .should('be.visible')
       .and('contain', 2);
-    cy.get('button[aria-label="previous slide"]')
+    window.cy.get('button[aria-label="previous slide"]')
       .click();
-    cy.get('div[aria-label="Slide number 1"]')
+    window.cy.get('div[aria-label="Slide number 1"]')
       .should('be.visible')
       .and('contain', 1);
 
     // Delete the presentation
-    cy.get('button[aria-label="Delete Presentation"]')
+    window.cy.get('button[aria-label="Delete Presentation"]')
       .click();
-    cy.get('button[aria-label="Confirm Deletion"]')
+    window.cy.get('button[aria-label="Confirm Deletion"]')
       .click();
-    cy.url().should('include', 'localhost:3000/dashboard');
+    window.cy.url().should('include', 'localhost:3000/dashboard');
 
 
     // Logout successfully
-    cy.get('button[aria-label="Logout of Presto"]')
+    window.cy.get('button[aria-label="Logout of Presto"]')
       .click();
-    cy.url().should('include', 'localhost:3000/');
+    window.cy.url().should('include', 'localhost:3000/');
 
     // Login successfully
-    cy.get('a[aria-label="Login to Presto"]')
+    window.cy.get('a[aria-label="Login to Presto"]')
       .click();
-    cy.url().should('include', 'localhost:3000/login');
-    cy.get('input[id="email"]')
+    window.cy.url().should('include', 'localhost:3000/login');
+    window.cy.get('input[id="email"]')
       .focus()
       .type('random@random.com');
-    cy.get('input[id="password"]')
+    window.cy.get('input[id="password"]')
       .focus()
       .type('password123');
-    cy.get('button[aria-label="Login button"]')
+    window.cy.get('button[aria-label="Login button"]')
       .click();
-    cy.url().should('include', 'localhost:3000/dashboard');
+    window.cy.url().should('include', 'localhost:3000/dashboard');
   });
 });
