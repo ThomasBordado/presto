@@ -136,7 +136,7 @@ function Dashboard() {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await axios.get(`${config.BACKEND_URL}/store`, {
+      const response = await axios.get(`${config.BACKEND_LOCAL}/store`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const store = response.data.store;
@@ -188,7 +188,7 @@ function Dashboard() {
     try {
       const updatedPresentations = [newPresentation, ...presentations];
       await axios.put(
-        `${config.BACKEND_URL}/store`,
+        `${config.BACKEND_LOCAL}/store`,
         { store: { presentations: updatedPresentations } },
         { headers: { Authorization: `Bearer ${token}` } }
       );

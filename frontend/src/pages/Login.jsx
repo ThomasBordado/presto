@@ -92,7 +92,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${config.BACKEND_URL}/admin/auth/login`, { email, password });
+      const response = await axios.post(`${config.BACKEND_LOCAL}/admin/auth/login`, { email, password });
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {

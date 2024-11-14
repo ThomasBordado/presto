@@ -98,7 +98,7 @@ function Register() {
     }
 
     try {
-      const response = await axios.post(`${config.BACKEND_URL}/admin/auth/register`, { email, password, name });
+      const response = await axios.post(`${config.BACKEND_LOCAL}/admin/auth/register`, { email, password, name });
       setToken(response.data.token);
       navigate('/dashboard');
     } catch (error) {
