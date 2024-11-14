@@ -82,8 +82,8 @@ const PresentationCard = ({ name, description, slideCount, thumbnail, onClick })
   >
     <ThumbnailContainer $thumbnail={thumbnail} />
     <Info>
-      <Title>{format(name, 26)}</Title>
-      {description && <Description>{format(description, 32)}</Description>}
+      <Title>{format(name, 21)}</Title>
+      {description && <Description>{format(description, 26)}</Description>}
       <SlideCount>{slideCount} Slide{slideCount !== 1 ? 's' : ''}</SlideCount>
     </Info>
   </PresentationCardContainer>
