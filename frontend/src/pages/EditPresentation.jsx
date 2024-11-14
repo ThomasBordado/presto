@@ -1037,7 +1037,7 @@ const EditPresentation = () => {
 
           {isDeleteModalOpen && (
             <ModalSmall onClose={closeDeleteModal} aria-labelledby="confirmPresentationDelete" aria-modal="true">
-              <ModalText id="confirmPresentationDelete">Are you sure you want to delete this presentation?</ModalText>
+              <ModalText id="confirmPresentationDelete">Are you sure?</ModalText>
               <ButtonContainer>
                 <ConfirmButton onClick={handleDelete} aria-label="Confirm Deletion">
                   Yes
