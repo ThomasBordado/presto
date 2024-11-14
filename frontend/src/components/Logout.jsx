@@ -6,16 +6,21 @@ import styled from 'styled-components';
 
 const LogoutButton = styled.button`
   font-family: Arial, sans-serif;
-  background-color: #dc3545;
-  color: white;
-  padding: 10px 20px;
+  background-color: #b22222;
+  color: #ffffff;
+  padding: 8px 21px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  
+  transition: background-color 0.3s ease;
+
   &:hover {
-    background-color: #c82333;
+    background-color: #8B1A1A;
+  }
+
+  &:focus {
+    outline: 2px solid white;
   }
 `;
 
