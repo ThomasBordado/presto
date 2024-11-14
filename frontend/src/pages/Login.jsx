@@ -17,7 +17,7 @@ const Container = styled.div`
   background-color: rgba(0, 0, 0, 0.8);
 `;
 
-const LoginBox = styled.div`
+const LoginBox = styled.main`
   background-color: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: 8px;
