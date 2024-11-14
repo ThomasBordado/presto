@@ -107,7 +107,7 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      return showError('Passwords do not match. Please reenter your password and try again.');
+      return showError('Passwords do not match. Please re-enter your password and try again.');
     }
 
     try {
