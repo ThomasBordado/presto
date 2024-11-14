@@ -2,12 +2,6 @@ import { useState } from 'react';
 import ModalMedium from './ModalMedium';
 import styled from 'styled-components';
 
-const FormField = styled.div`
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-`;
-
 const ModalTitle = styled.h3`
   font-family: Arial, sans-serif;
   font-size: 24px;
@@ -47,13 +41,8 @@ const SelectField = styled.select`
   color: #333;
   cursor: pointer;
 
-  &:hover {
-    border-color: #007bff;
-  }
-
   &:focus {
-    outline: none;
-    border-color: #007bff;
+    outline: 2px solid #0056b3;
     box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
   }
 `;
@@ -106,57 +95,81 @@ const BackgroundPickerModal = ({ isOpen, onClose, onSaveBackground, currentBackg
   if (!isOpen) return null;
 
   return (
-    <ModalMedium onClose={onClose}>
-      <ModalTitle>Choose Background</ModalTitle>
-      <FormField>
-        <FormLabel>Background Type:</FormLabel>
-        <SelectField value={backgroundType} onChange={(e) => setBackgroundType(e.target.value)}>
-          <option value="solid">Solid Color</option>
-          <option value="gradient">Gradient</option>
-          <option value="image">Image</option>
-        </SelectField>
-      </FormField>
+    <ModalMedium onClose={onClose} aria-labelledby="backgroundPicker">
+      <ModalTitle id="backgroundPicker">Choose Background</ModalTitle>
+
+      <FormLabel htmlFor="background-type">Background Type:</FormLabel>
+      <SelectField id="background-type" value={backgroundType} onChange={(e) => setBackgroundType(e.target.value)}>
+        <option value="solid">Solid Color</option>
+        <option value="gradient">Gradient</option>
+        <option value="image">Image</option>
+      </SelectField>
 
       {backgroundType === 'solid' && (
-        <FormField>
-          <FormLabel>Color:</FormLabel>
-          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
-        </FormField>
+        <>
+          <FormLabel htmlFor="solidColorBackground">Color:</FormLabel>
+          <input
+            id="solidColorBackground"
+            type="color"
+            value={color}
+            aria-label="Select solid color"
+            onChange={(e) => setColor(e.target.value)}
+          />
+        </>
       )}
 
       {backgroundType === 'gradient' && (
         <>
-          <FormField>
-            <FormLabel>Gradient Start Color (Left/Top):</FormLabel>
-            <input type="color" value={gradientStart} onChange={(e) => setGradientStart(e.target.value)} />
-          </FormField>
-          <FormField>
-            <FormLabel>Gradient End Color (Right/Bottom):</FormLabel>
-            <input type="color" value={gradientEnd} onChange={(e) => setGradientEnd(e.target.value)} />
-          </FormField>
-          <FormField>
-            <FormLabel>Direction:</FormLabel>
-            <SelectField value={gradientDirection} onChange={(e) => setGradientDirection(e.target.value)}>
-              <option value="to right">Left to Right</option>
-              <option value="to bottom">Top to Bottom</option>
-            </SelectField>
-          </FormField>
+          <FormLabel htmlFor="gradientStartBackground">Gradient Start Color (Left/Top):</FormLabel>
+          <input
+            id="gradientStartBackground"
+            type="color"
+            value={gradientStart}
+            aria-label="Select gradient start color"
+            onChange={(e) => setGradientStart(e.target.value)}
+          />
+
+          <FormLabel htmlFor="gradientEndBackground">Gradient End Color (Right/Bottom):</FormLabel>
+          <input
+            id="gradientEndBackground"
+            type="color"
+            value={gradientEnd}
+            aria-label="Select gradient end color"
+            onChange={(e) => setGradientEnd(e.target.value)}
+          />
+
+          <FormLabel htmlFor="gradientDirectionBackground">Direction:</FormLabel>
+          <SelectField id="gradientDirectionBackground" value={gradientDirection} onChange={(e) => setGradientDirection(e.target.value)}>
+            <option value="to right">Left to Right</option>
+            <option value="to bottom">Top to Bottom</option>
+          </SelectField>
         </>
       )}
 
       {backgroundType === 'image' && (
-        <FormField>
-          <FormLabel>Image URL:</FormLabel>
-          <InputField type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-        </FormField>
+        <>
+          <FormLabel htmlFor="imageURLBackground">Image URL:</FormLabel>
+          <InputField
+            id="imageURLBackground"
+            type="text"
+            placeholder="Enter image URL"
+            value={imageUrl}
+            aria-label="Enter image URL"
+            onChange={(e) => setImageUrl(e.target.value)}
+          />
+        </>
       )}
 
-      <FormField>
-        <label>
-          <input type="checkbox" checked={isDefault} onChange={(e) => setDefault(e.target.checked)} />
-          Set Default Background
-        </label>
-      </FormField>
+      <FormLabel htmlFor="setDefaultBackground">
+        <input
+          id="setDefaultBackground"
+          type="checkbox"
+          checked={isDefault}
+          aria-label="Set as default background"
+          onChange={(e) => setDefault(e.target.checked)}
+        />
+        Set Default Background
+      </FormLabel>
 
       <SaveButton onClick={handleSave}>Save Background</SaveButton>
     </ModalMedium>
