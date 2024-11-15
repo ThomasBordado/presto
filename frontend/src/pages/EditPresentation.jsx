@@ -9,7 +9,6 @@ import config from '../../backend.config.json';
 import SlideControl from '../components/SlideContol';
 import SlideNumber from '../components/SlideNumber';
 import SlideContainer from '../components/SlideContainer';
-import ToolPanel from '../components/ToolPanel';
 import AddTextModal from '../components/AddTextModal';
 import EditTextModal from '../components/EditTextModal';
 import { useErrorMessage } from '../hooks/UseErrorMessage';
@@ -25,6 +24,7 @@ import CodeBlock from '../components/CodeBlock';
 import BackgroundPickerModal from '../components/BackgroundModalPicker';
 import SlideRearrangeModal from '../components/SlideRearrangeModal';
 import { v4 as uuidv4 } from 'uuid';
+import { FiMenu, FiX } from 'react-icons/fi';
 
 const Container = styled.div`
   background-color: #ebebeb;
@@ -69,9 +69,50 @@ const IconButton = styled.button`
 const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
-const BackButton = styled.button`
+const MenuIcon = styled.div`
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #333;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+
+  button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background-color: #555;
+    }
+  }
+`;
+
+const BackButton = styled.option`
   font-family: Arial, sans-serif;
   background-color: transparent;
   color: #2196f3;
@@ -88,10 +129,11 @@ const BackButton = styled.button`
   }
 `;
 
-const DeleteButton = styled.button`
+const DeleteButton = styled.option`
+  font-family: Arial, sans-serif;
   background-color: transparent;
   color: #f44336;
-  margin-right: 10px;
+  // margin-right: 10px;
   border: 2px solid #f44336;
   padding: 8px 15px;
   border-radius: 4px;
@@ -224,6 +266,17 @@ const CancelButton = styled.button`
   }
 `;
 
+const useIsMobile = (maxWidth = 768) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= maxWidth);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= maxWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [maxWidth]);
+
+  return isMobile;
+};
 
 const EditPresentation = () => {
   const { id } = useParams();
@@ -246,6 +299,10 @@ const EditPresentation = () => {
   const slideContainerRef = useRef(null);
   const { showError, ErrorDisplay } = useErrorMessage();
   const [isPickerOpen, setPickerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const isMobile = useIsMobile();
+  
 
   useEffect(() => {
     const handleURLChange = () => {
@@ -990,6 +1047,45 @@ const EditPresentation = () => {
     setPresentation((prev) => ({ ...prev, slides: updatedSlides }));
   };
 
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
+
+  const format = (str, maxLength) => {
+    if (str.length > maxLength) {
+      return str.substring(0, maxLength) + "...";
+    }
+    return str;
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    if (window.innerWidth > 768) setMenuOpen(false);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <Container>
       <ErrorDisplay aria-live="assertive" />
@@ -997,14 +1093,12 @@ const EditPresentation = () => {
         <div>
           <HeaderBar>
             <PresentationTitle>
-              {presentation.name}
-              <IconButton
-                onClick={openTitleEditModal}
-                aria-label="Edit Presentation Title and Thumbnail"
-              >
+              {isMobile ? format(presentation.name, 12) : format(presentation.name, 30)}
+              <IconButton onClick={openTitleEditModal} aria-label="Edit Presentation Title and Thumbnail">
                 <FaEdit />
               </IconButton>
             </PresentationTitle>
+            
             <ButtonGroup>
               <BackButton onClick={handleBack} aria-label="Go Back To Dashboard">
                 Back
@@ -1014,6 +1108,22 @@ const EditPresentation = () => {
               </DeleteButton>
               <Logout aria-label="Logout" />
             </ButtonGroup>
+
+            <MenuIcon onClick={toggleMenu} aria-label="Toggle Menu">
+              {menuOpen ? <FiX /> : <FiMenu />}
+            </MenuIcon>
+
+            {menuOpen && (
+              <DropdownMenu ref={menuRef}>
+                <BackButton onClick={handleBack} aria-label="Go Back To Dashboard">
+                  Back
+                </BackButton>
+                <DeleteButton onClick={openDeleteModal} aria-label="Delete Presentation">
+                  Delete Presentation
+                </DeleteButton>
+                <Logout aria-label="Logout" />
+              </DropdownMenu>
+            )}
           </HeaderBar>
 
           {isTitleEditModalOpen && (
@@ -1067,20 +1177,15 @@ const EditPresentation = () => {
             goToNextSlide={goToNextSlide}
             handleCreateSlide={handleCreateSlide}
             handleDeleteSlide={handleDeleteSlide}
-            aria-label={`Slide ${currentSlideIndex + 1} of ${presentation.slides.length}`}
-          />
-
-          <ToolPanel
             onAddText={openAddTextModal}
             onAddImage={openAddImageModal}
             onAddVideo={openAddVideoModal}
             onAddCode={openAddCodeModal}
-            aria-label="Add Content"
+            openBackgroundModal={openBackgroundModal}
+            openRearrangeModal={openRearrangeModal}
+            handlePreviewClick={handlePreviewClick}
+            aria-label="slide controls"
           />
-
-          <button onClick={openBackgroundModal} aria-label="Open Background Settings">Background Settings</button>
-          <button onClick={handlePreviewClick} aria-label="Preview Presentation">Preview</button>
-          <button onClick={openRearrangeModal} aria-label="Rearrange Slides">Rearrange Slides</button>
 
           <AddTextModal
             isOpen={isAddTextModalOpen}

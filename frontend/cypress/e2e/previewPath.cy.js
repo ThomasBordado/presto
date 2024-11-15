@@ -44,7 +44,7 @@ window.describe('Preview Path', () => {
       .click();
 
     // Add TextBox to slide
-    window.cy.get('button[aria-label="tool pannel"]')
+    window.cy.get('button[aria-controls="content-options"]')
       .click()
     window.cy.get('button[aria-label="add text"]')
       .click()
@@ -59,7 +59,8 @@ window.describe('Preview Path', () => {
       .find('[aria-label="Text Block"]')
       .should('exist');
 
-    // Add a slide
+    // Add a slide, first click off screen to toggle off the overlay.
+    window.cy.get('body').click(0, 0);
     window.cy.get('button[aria-label="add slide"')
       .click();
     window.cy.wait(1000);
@@ -68,7 +69,7 @@ window.describe('Preview Path', () => {
       .and('contain', 2);
 
     // Add image to slide
-    window.cy.get('button[aria-label="tool pannel"]')
+    window.cy.get('button[aria-controls="content-options"]')
       .click()
     window.cy.get('button[aria-label="add image"]')
       .click()
@@ -84,6 +85,7 @@ window.describe('Preview Path', () => {
       .should('exist');
 
     // Add a slide
+    window.cy.get('body').click(0, 0);
     window.cy.get('button[aria-label="add slide"')
       .click();
     window.cy.wait(1000);
@@ -92,7 +94,7 @@ window.describe('Preview Path', () => {
       .and('contain', 3);
     
     // Add video to slide
-    window.cy.get('button[aria-label="tool pannel"]')
+    window.cy.get('button[aria-controls="content-options"]')
       .click()
     window.cy.get('button[aria-label="add video"]')
       .click()
@@ -108,6 +110,7 @@ window.describe('Preview Path', () => {
       .should('exist');
     
     // Return to slide with text box
+    window.cy.get('body').click(0, 0);
     window.cy.get('button[aria-label="previous slide"')
       .click();
     window.cy.get('button[aria-label="previous slide"')
@@ -132,7 +135,9 @@ window.describe('Preview Path', () => {
     // Check if text box has been deleted
     window.cy.contains('Random text(changed)').should('not.exist');
     
-    // Check rearrange slides Opens
+    // Check rearrange slides Opens 
+    window.cy.get('button[aria-controls="slide-settings"]')
+      .click()
     window.cy.get('button[aria-label="Rearrange Slides"]')
       .click();
     window.cy.get('[id="rearrange-title"]').should('contain', 'Rearrange Slides');
@@ -150,8 +155,11 @@ window.describe('Preview Path', () => {
       .click();
     window.cy.get('@windowOpen').should('have.been.calledOnce');
 
+    // Toggle off slide settings
+    window.cy.get('body').click(0, 0);
+
     // Try Logout from EditPresentation page
-    window.cy.get('button[aria-label="Logout of Presto"]')
+    window.cy.get('option[aria-label="Logout of Presto"]')
       .click();
     window.cy.url().should('include', 'localhost:3000/');
 
