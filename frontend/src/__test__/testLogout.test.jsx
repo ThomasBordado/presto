@@ -24,8 +24,7 @@ describe('Logout Component', () => {
     // Check that the component renders with the expected button
   it('renders the Logout button', () => {
     renderWithRouter(<Logout />);
-    const button = screen.getByRole('button', { name: /logout/i });
-    expect(button).toBeInTheDocument();
+    expect(screen.getByLabelText(/Logout of Presto/i)).toBeInTheDocument();
   });
 
   // Mocking token and API response
@@ -35,7 +34,7 @@ describe('Logout Component', () => {
     axios.post.mockResolvedValueOnce({ data: { message: 'Logged out successfully' } });
 
     renderWithRouter(<Logout />);
-    const button = screen.getByRole('button', { name: /logout/i });
+    const button = screen.getByLabelText(/Logout of Presto/i);
     fireEvent.click(button);
 
     // Check that the API was called with the correct endpoint and token
@@ -60,7 +59,7 @@ describe('Logout Component', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   
     renderWithRouter(<Logout />);
-    const button = screen.getByRole('button', { name: /logout/i });
+    const button = screen.getByLabelText(/Logout of Presto/i);
     fireEvent.click(button);
   
     // Ensure no API call is made and the expected error message is logged
@@ -80,7 +79,7 @@ describe('Logout Component', () => {
     console.error = vi.fn();
 
     renderWithRouter(<Logout />);
-    const button = screen.getByRole('button', { name: /logout/i });
+    const button = screen.getByLabelText(/Logout of Presto/i);
     fireEvent.click(button);
 
     // Verify that the API call is made and error is logged when it fails

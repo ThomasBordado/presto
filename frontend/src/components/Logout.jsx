@@ -4,7 +4,7 @@ import config from '../../backend.config.json';
 import { getToken, removeToken } from '../Auth';
 import styled from 'styled-components';
 
-const LogoutButton = styled.button`
+const LogoutButton = styled.option`
   font-family: Arial, sans-serif;
   background-color: #b22222;
   color: #ffffff;

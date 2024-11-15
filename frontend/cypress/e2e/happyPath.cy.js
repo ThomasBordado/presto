@@ -78,7 +78,7 @@ window.describe('Happy Path', () => {
       .and('contain', 1);
 
     // Delete the presentation
-    window.cy.get('button[aria-label="Delete Presentation"]')
+    window.cy.get('option[aria-label="Delete Presentation"]')
       .click();
     window.cy.get('button[aria-label="Confirm Deletion"]')
       .click();
@@ -86,7 +86,7 @@ window.describe('Happy Path', () => {
 
 
     // Logout successfully
-    window.cy.get('button[aria-label="Logout of Presto"]')
+    window.cy.get('option[aria-label="Logout of Presto"]')
       .click();
     window.cy.url().should('include', 'localhost:3000/');
 
